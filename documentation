@@ -1,0 +1,15 @@
+YELE APP DOCUMENTATION
+
+Authentication Flow :-
+- Total 3 Roles:- User, Dealer & Driver
+
+   1. Login Screen
+      - Fields:- email, password, role selection
+      - All Validations are implemented, By Default User Role is selected
+      - File name:- 
+   1. Register Screen
+      - Fields:- email, password, role selection
+      - All Validations are implemented, By Default User Role is selected
+      - File name:- 
+  
+
