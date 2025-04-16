@@ -53,55 +53,58 @@ class _MyAccountViewState extends State<MyAccountView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 20.h,
-                    alignment: Alignment.topCenter,
-                    decoration: BoxDecoration(
-                      color: AppColors.appColor,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(20.sp),
-                        bottomRight: Radius.circular(20.sp),
-                      ),
-                    ),
-                    child: customAppBar(
-                      title: 'My Account',
-                      actionWidget: Container(
-                        padding: EdgeInsets.all(13.sp),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.borderColor),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20.h,
+                      alignment: Alignment.topCenter,
+                      decoration: BoxDecoration(
+                        color: AppColors.appColor,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20.sp),
+                          bottomRight: Radius.circular(20.sp),
                         ),
-                        child: GestureDetector(
-                          onTap: () => _onLogoutTap(context),
-                          child: CustomAssetImage(
-                            image: Assets.assetsIconsLogout,
-                            height: 2.h,
-                            width: 2.h,
+                      ),
+                      child: customAppBar(
+                        title: 'My Account',
+                        actionWidget: Container(
+                          padding: EdgeInsets.all(13.sp),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.borderColor),
+                          ),
+                          child: GestureDetector(
+                            onTap: () => _onLogoutTap(context),
+                            child: CustomAssetImage(
+                              image: Assets.assetsIconsLogout,
+                              height: 2.h,
+                              width: 2.h,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  AccountInfoWidget(),
-                  Divider(
-                    thickness: 3,
-                    color: AppColors.borderColor.withOpacity(0.3),
-                  ),
-                  ProfileInfoWidget(formKey: _formKey),
-                ],
+                    AccountInfoWidget(),
+                    Divider(
+                      thickness: 3,
+                      color: AppColors.borderColor.withOpacity(0.3),
+                    ),
+                    ProfileInfoWidget(formKey: _formKey),
+                  ],
+                ),
               ),
-            ),
-            ProfileEditWidget(),
-          ],
+              ProfileEditWidget(),
+            ],
+          ),
         ),
       ),
     );

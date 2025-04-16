@@ -58,12 +58,7 @@ class _LocateDealershipWidgetState extends State<LocateDealershipWidget> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.topRight,
-          colors: [
-            const Color(0xFF3FA9F5),
-
-            const Color(0xFF3CC9E1),
-            // First color
-          ],
+          colors: AppColors.gradient.colors,
         ),
       ),
       child: Column(

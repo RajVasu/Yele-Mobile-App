@@ -24,6 +24,7 @@ class _SearchCarWidgetState extends State<SearchCarWidget> {
           child: CustomTextfield(
             prefixIcon: Assets.assetsIconsSearchCar,
             hintText: 'Search cars...',
+            readOnly: true,
             prefixIconColor: AppColors.darkGreyColor,
             borderRadius: BorderRadius.circular(30.sp),
           ),
@@ -32,8 +33,8 @@ class _SearchCarWidgetState extends State<SearchCarWidget> {
         GestureDetector(
           onTap: () => Get.toNamed(Routes.filterScreen),
           child: Container(
-            height: 6.h,
-            width: 6.h,
+            height: 5.5.h,
+            width: 5.5.h,
             padding: EdgeInsets.all(15.sp),
             decoration: BoxDecoration(
               shape: BoxShape.circle,

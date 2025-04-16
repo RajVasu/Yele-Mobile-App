@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
+import 'package:yele/src/api/endpoints.dart';
 import 'package:yele/src/config/constants/app_colors.dart';
 import 'package:yele/src/config/constants/assets.dart';
 import 'package:yele/src/config/router/routes.dart';
@@ -13,7 +17,8 @@ import 'package:yele/src/core/widgets/custom_image.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
 import 'package:yele/src/core/widgets/custom_text_field.dart';
 import 'package:yele/src/core/widgets/gap.dart';
-import 'package:yele/src/features/user/new_car/controller/new_car_controller.dart';
+import 'package:yele/src/features/user/car/model/get_car_list_model.dart';
+import 'package:yele/src/features/user/used_car/controller/used_car_controller.dart';
 
 class UsedCarList extends StatefulWidget {
   const UsedCarList({super.key});
@@ -23,142 +28,179 @@ class UsedCarList extends StatefulWidget {
 }
 
 class _UsedCarListState extends State<UsedCarList> {
-
-
-  NewCarController controller = Get.find();
+  final UsedCarController _usedCarController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.only(bottom: 2.h),
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Container(
-          // padding: EdgeInsets.all(0.sp),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.borderColor),
-            borderRadius: BorderRadius.circular(15.sp),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  width: 26.w,
-                  padding: EdgeInsets.all(5),
+    return LazyLoadScrollView(
+      onEndOfPage: () {
+        if (_usedCarController.currentPageIndex.value <
+            _usedCarController.getCarData.value.totalPages!) {
+          _usedCarController.paginationselected.value = true;
+          _usedCarController.getCarBrandListDataPagination();
+          setState(() {
+            Timer(const Duration(seconds: 5), () {
+              setState(() {
+                _usedCarController.paginationselected.value = false;
+              });
+            });
+          });
+        }
+      },
+      child: ListView.separated(
+        padding: EdgeInsets.only(bottom: 2.h),
+        shrinkWrap: true,
+        itemCount: _usedCarController.usedCarList.length,
+        itemBuilder: (context, index) {
+          CarListData carData = _usedCarController.usedCarList[index];
+          return GestureDetector(
+            onTap:
+                () => Get.toNamed(
+                  Routes.carDetailScreen,
+                  arguments: carData.carId,
+                ),
+            child: Column(
+              children: [
+                Container(
+                  // padding: EdgeInsets.all(0.sp),
                   decoration: BoxDecoration(
-                    color: AppColors.redColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(15.sp),
-                      bottomLeft: Radius.circular(15.sp),
-                    ),
+                    border: Border.all(color: AppColors.borderColor),
+                    borderRadius: BorderRadius.circular(15.sp),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Stack(
                     children: [
-                      Icon(
-                        Icons.star_border,
-                        color: AppColors.whiteColor,
-                        size: 17.sp,
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          width: 26.w,
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: AppColors.redColor,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15.sp),
+                              bottomLeft: Radius.circular(15.sp),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.star_border,
+                                color: AppColors.whiteColor,
+                                size: 17.sp,
+                              ),
+                              GapW(1.w),
+                              CustomText(
+                                text: 'Bestseller',
+                                fontSize: 15.sp,
+                                color: AppColors.whiteColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      GapW(1.w),
-                      CustomText(
-                        text: 'Bestseller',
-                        fontSize: 15.sp,
-                        color: AppColors.whiteColor,
-                        fontWeight: FontWeight.w700,
+                      Padding(
+                        padding: EdgeInsets.all(15.sp),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              text: carData.carName!,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            GapH(0.5.h),
+                            CustomText(
+                              text:
+                                  '${carData.carType} - ${carData.carTransmission}',
+                              fontSize: 15.sp,
+                              color: AppColors.greyColor,
+                            ),
+                            GapH(2.h),
+                            carData.carImage != null
+                                ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.sp),
+                                  child: CustomNetworkImage(
+                                    height: 22.h,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    image:
+                                        '${Endpoints.baseUrl}${carData.carImage}',
+                                  ),
+                                )
+                                : CustomNoImage(height: 22.h),
+                            GapH(2.h),
+                            CustomText(
+                              text: '1.2 Smart Plus',
+                              fontWeight: FontWeight.w700,
+                            ),
+                            GapH(0.5.h),
+                            CustomText(
+                              text:
+                                  '${carData.carFuelType} - ${carData.carTransmission}',
+                              fontSize: 15.sp,
+                              color: AppColors.greyColor,
+                            ),
+                            GapH(2.h),
+                            CustomText(
+                              text: '${carData.price}',
+                              fontWeight: FontWeight.w700,
+                            ),
+                            GapH(2.h),
+                            CustomButton(
+                              text: 'Request More Info',
+                              fontSize: 15.sp,
+                              borderColor: AppColors.appColor,
+                              buttonColor: Colors.transparent,
+                              textColor: AppColors.appColor,
+                              borderWidth: 1,
+
+                              onTap: () {
+                                if (Storage.instance.getToken() != null) {
+                                  requestInfoDialog();
+                                } else {
+                                  Get.toNamed(Routes.loginScreen);
+                                }
+                              },
+                            ),
+                            GapH(1.h),
+                            CustomButton(
+                              text: 'Schedule a Test Drive',
+                              fontSize: 15.sp,
+                      onTap: () => Get.toNamed(Routes.bookTestDriveScreen),
+
+                              // onTap: () => Get.toNamed(Routes.carDetailScreen),
+                              gradient: AppColors.gradient,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(15.sp),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      text: 'Maruti Suzuki Swift',
-                      fontWeight: FontWeight.w700,
-                    ),
-                    GapH(0.5.h),
-                    CustomText(
-                      text: 'Hatchback - Manual - 1/5 Variants',
-                      fontSize: 15.sp,
-                      color: AppColors.greyColor,
-                    ),
-                    GapH(2.h),
-                    CustomAssetImage(image: Assets.assetsImagesCar),
-                    GapH(2.h),
-                    Row(
-                      children: [
-                        CustomText(
-                          text: '1.2 Smart Plus',
-                          fontWeight: FontWeight.w700,
-                        ),
-                        Spacer(),
-                        CircleAvatar(
-                          backgroundColor: const Color(0xFF242424),
-                          radius: 12.sp,
-                        ),
-                        GapW(0.5.w),
-                        CircleAvatar(
-                          backgroundColor: const Color(0xFF553724),
-                          radius: 12.sp,
-                        ),
-                        GapW(0.5.w),
-                        CircleAvatar(
-                          backgroundColor: const Color(0xFF720004),
-                          radius: 12.sp,
-                        ),
-                      ],
-                    ),
-                    GapH(0.5.h),
-                    CustomText(
-                      text: 'Petrol - Manual - Available in 4 colors',
-                      fontSize: 15.sp,
-                      color: AppColors.greyColor,
-                    ),
-                    GapH(2.h),
-                    CustomText(text: '\$9999.52', fontWeight: FontWeight.w700),
-                    GapH(2.h),
-                    CustomButton(
-                      text: 'Request More Info',
-                      fontSize: 15.sp,
-                      borderColor: AppColors.appColor,
-                      buttonColor: Colors.transparent,
-                      textColor: AppColors.appColor,
-                      borderWidth: 1,
 
-                         onTap: () {
-                        if (Storage.instance.getToken() != null) {
-                          requestInfoDialog();
-                        } else {
-                          Get.toNamed(Routes.loginScreen);
-                        }
-                      },
+                if (index == _usedCarController.usedCarList.length - 1 &&
+                    _usedCarController.paginationselected.value) ...[
+                  Padding(
+                    padding: EdgeInsets.all(20.sp),
+                    child: LoadingAnimationWidget.threeArchedCircle(
+                      color: AppColors.appColor,
+                      size: 30,
                     ),
-                    GapH(1.h),
-                    CustomButton(
-                      text: 'See Details',
-                      fontSize: 15.sp,
-                      onTap: () => Get.toNamed(Routes.carDetailScreen),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (context, index) => GapH(2.h),
-      itemCount: 5,
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (context, index) => GapH(2.h),
+      ),
     );
   }
 
-   void saveInquiryDialog() {
+  void saveInquiryDialog() {
     Get.dialog(
       barrierDismissible: false,
       BackdropFilter(
@@ -207,7 +249,6 @@ class _UsedCarListState extends State<UsedCarList> {
     );
   }
 
-  
   void requestInfoDialog() {
     Get.dialog(
       barrierDismissible: false,
@@ -280,7 +321,8 @@ class _UsedCarListState extends State<UsedCarList> {
                               ),
                               Expanded(
                                 child: CustomTextfield(
-                                  controller: controller.firstNameController,
+                                  controller:
+                                      _usedCarController.firstNameController,
                                   hintText: 'First Name',
                                 ),
                               ),
@@ -291,7 +333,8 @@ class _UsedCarListState extends State<UsedCarList> {
                             children: [
                               Expanded(
                                 child: CustomTextfield(
-                                  controller: controller.lastNameController,
+                                  controller:
+                                      _usedCarController.lastNameController,
                                   hintText: 'Last Name',
                                 ),
                               ),
@@ -316,7 +359,8 @@ class _UsedCarListState extends State<UsedCarList> {
                                 flex: 3,
                                 fit: FlexFit.loose,
                                 child: CustomTextfield(
-                                  controller: controller.contactNoController,
+                                  controller:
+                                      _usedCarController.contactNoController,
                                   hintText: '77084 77084',
                                 ),
                               ),
@@ -331,7 +375,7 @@ class _UsedCarListState extends State<UsedCarList> {
                           CustomText(text: 'You can reach me by email at'),
                           GapH(1.2.h),
                           CustomTextfield(
-                            controller: controller.emailController,
+                            controller: _usedCarController.emailController,
                             hintText: 'Email Address',
                           ),
                           GapH(1.2.h),
@@ -345,7 +389,8 @@ class _UsedCarListState extends State<UsedCarList> {
                               Flexible(
                                 fit: FlexFit.loose,
                                 child: CustomTextfield(
-                                  controller: controller.zipCodeController,
+                                  controller:
+                                      _usedCarController.zipCodeController,
                                   hintText: '183251',
                                 ),
                               ),
@@ -384,10 +429,15 @@ class _UsedCarListState extends State<UsedCarList> {
                                   shape: ContinuousRectangleBorder(
                                     borderRadius: BorderRadius.circular(7),
                                   ),
-                                  value: controller.agreeRequestInfo.value,
-                                  onChanged: (value) =>
-                                      controller.agreeRequestInfo.value =
-                                          !controller.agreeRequestInfo.value,
+                                  value:
+                                      _usedCarController.agreeRequestInfo.value,
+                                  onChanged:
+                                      (value) =>
+                                          _usedCarController
+                                              .agreeRequestInfo
+                                              .value = !_usedCarController
+                                                  .agreeRequestInfo
+                                                  .value,
                                 ),
                               ),
                               GapW(1.2.w),

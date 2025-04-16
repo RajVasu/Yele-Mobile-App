@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:yele/src/api/endpoints.dart';
 import 'package:yele/src/config/constants/app_colors.dart';
 import 'package:yele/src/config/constants/assets.dart';
+import 'package:yele/src/core/database/storage.dart';
 import 'package:yele/src/core/screens/no_internet_screen.dart';
 import 'package:yele/src/core/widgets/custom_image.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
@@ -13,6 +15,8 @@ import 'package:yele/src/features/user/home/components/car_maker_widget.dart';
 import 'package:yele/src/features/user/home/components/explore_option_widget.dart';
 import 'package:yele/src/features/user/home/components/locate_dealership_widget.dart';
 import 'package:yele/src/features/user/home/components/review_widget.dart';
+import 'package:yele/src/features/user/home/controller/user_home_controller.dart';
+import 'package:yele/src/features/user/profile/controller/profile_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,192 +40,144 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  RxInt currentPage = 0.obs;
-  RxInt currentIndex = 0.obs;
-  RxInt selectedIndex = 0.obs;
-  final PageController _pageController = PageController();
-  final PageController _pageModelController = PageController();
-  final List<Map<String, String>> carBrands = [
-    {
-      'name': 'Mercedes',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/1200px-Mercedes-Logo.svg.png',
-    },
-    {
-      'name': 'Suzuki',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Suzuki_logo_2.svg/2560px-Suzuki_logo_2.svg.png',
-    },
-    {
-      'name': 'Tata',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_logo.svg/2231px-Tata_logo.svg.png',
-    },
-    {
-      'name': 'Hyundai',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_Motor_Company_logo.svg/2560px-Hyundai_Motor_Company_logo.svg.png',
-    },
-    {
-      'name': 'Honda',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Honda.svg/2560px-Honda.svg.png',
-    },
-    {
-      'name': 'Jeep',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Jeep_logo.svg/2560px-Jeep_logo.svg.png',
-    },
-    {
-      'name': 'Kia',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kia-logo.png/1200px-Kia-logo.png',
-    },
-    {
-      'name': 'MG',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/MG_Motors_logo.svg/2560px-MG_Motors_logo.svg.png',
-    },
-    {
-      'name': 'Mercedes',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/1200px-Mercedes-Logo.svg.png',
-    },
-    {
-      'name': 'Suzuki',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Suzuki_logo_2.svg/2560px-Suzuki_logo_2.svg.png',
-    },
-    {
-      'name': 'Tata',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_logo.svg/2231px-Tata_logo.svg.png',
-    },
-    {
-      'name': 'Hyundai',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_Motor_Company_logo.svg/2560px-Hyundai_Motor_Company_logo.svg.png',
-    },
-    {
-      'name': 'Kia',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kia-logo.png/1200px-Kia-logo.png',
-    },
-    {
-      'name': 'MG',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/MG_Motors_logo.svg/2560px-MG_Motors_logo.svg.png',
-    },
-    {
-      'name': 'Honda',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Honda.svg/2560px-Honda.svg.png',
-    },
-    {
-      'name': 'Jeep',
-      'logo':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Jeep_logo.svg/2560px-Jeep_logo.svg.png',
-    },
-  ];
-  List<String> carModel = [
-    'Corolla',
-    'Glanza',
-    'Rumion',
-    'Hilux',
-    'Urban Cruiser Taisor',
-    'Urban Cruiser Hyryder',
-    'Innova Crysta',
-    'Vellfire',
-    'Avalon',
-    'Allion',
-    'Alphard',
-    'Avanza',
-    'Century',
-    'Avalon',
-    'Avanza',
-    'Rumion',
-    'Hilux',
-    'Urban Cruiser Taisor',
-    'Century',
-    'Corolla',
-    'Vellfire',
-    'Glanza',
-    'Allion',
-    'Urban Cruiser Hyryder',
-    'Alphard',
-    'Innova Crysta',
-  ];
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _pageModelController.dispose();
-    super.dispose();
-  }
-
+  final ProfileController _profileController = Get.find();
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.topRight,
-                colors: [
-                  const Color(0xFF3FA9F5),
-                  const Color(0xFF3FA9F5),
-                  const Color(0xFF3FA9F5),
-                  const Color(0xFF3CC9E1),
-                  // First color
-                ],
-              ),
-            ),
-            padding: EdgeInsets.only(top: 3.h),
-            child: Column(
-              children: [
-                GapH(15),
-                Container(
-                  margin: EdgeInsets.all(15.sp),
-                  padding: EdgeInsets.all(15.sp),
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(20.sp),
-                  ),
-                  child: Row(
-                    children: [
-                      GapW(1.w),
-                      CustomAssetImage(
-                        image: Assets.assetsIconsSearch,
-                        height: 2.h,
-                        width: 2.h,
-                      ),
-                      GapW(2.w),
-                      CustomText(
-                        text: "Search cars...",
-                        color: AppColors.greyColor,
-                      ),
-                    ],
+    return GetBuilder(
+      init: UserHomeController(),
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.topRight,
+                    colors: AppColors.gradient.colors,
                   ),
                 ),
-              ],
-            ),
+                padding: EdgeInsets.only(top: 3.h),
+                child: Column(
+                  children: [
+                    if (Storage.instance.getToken() != null) ...[
+                      GapH(3.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.whiteColor,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Obx(
+                                () => CircleAvatar(
+                                  radius: 18.sp,
+                                  backgroundColor: AppColors.appColor,
+                                  backgroundImage:
+                                      (_profileController
+                                                  .userData
+                                                  .value
+                                                  .profileImage !=
+                                              null
+                                          ? NetworkImage(
+                                            '${Endpoints.baseUrl}${_profileController.userData.value.profileImage!}',
+                                          )
+                                          : AssetImage(
+                                            Assets.assetsImagesUserImage,
+                                          )),
+                                ),
+                              ),
+                            ),
+                            GapW(2.w),
+                            CustomText(
+                              text:
+                                  '${_profileController.userData.value.firstName} ${_profileController.userData.value.lastName}',
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.whiteColor,
+                            ),
+                            Spacer(),
+                            Container(
+                              padding: EdgeInsets.all(13.sp),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.whiteColor.withOpacity(0.5),
+                                ),
+                              ),
+                              child: CustomAssetImage(
+                                image: Assets.assetsIconsMessage,
+                                height: 2.5.h,
+                                width: 2.5.h,
+                              ),
+                            ),
+                            GapW(2.w),
+                            Container(
+                              padding: EdgeInsets.all(13.sp),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.whiteColor.withOpacity(0.5),
+                                ),
+                              ),
+                              child: CustomAssetImage(
+                                image: Assets.assetsIconsNotification,
+                                height: 2.5.h,
+                                width: 2.5.h,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      GapH(15),
+                    ],
+                    Container(
+                      margin: EdgeInsets.all(15.sp),
+                      padding: EdgeInsets.all(15.sp),
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(20.sp),
+                      ),
+                      child: Row(
+                        children: [
+                          GapW(1.w),
+                          CustomAssetImage(
+                            image: Assets.assetsIconsSearch,
+                            height: 2.h,
+                            width: 2.h,
+                          ),
+                          GapW(2.w),
+                          CustomText(
+                            text: "Search cars...",
+                            color: AppColors.greyColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GapH(15),
+              HomeBannerWidget(),
+              GapH(15),
+              ExploreOptionWidget(),
+              GapH(15),
+              ReviewWidget(),
+              GapH(15),
+              CarMakerWidget(),
+              GapH(15),
+              BrowseType(),
+              GapH(15),
+              LocateDealershipWidget(),
+            ],
           ),
-          GapH(15),
-          HomeBannerWidget(),
-          GapH(15),
-          ExploreOptionWidget(),
-          GapH(15),
-          ReviewWidget(),
-          GapH(15),
-          CarMakerWidget(),
-          GapH(15),
-          BrowseType(),
-          GapH(15),
-          LocateDealershipWidget(),
-        ],
-      ),
+        );
+      },
     );
   }
 }

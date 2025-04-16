@@ -57,8 +57,26 @@ class _ProfileViewState extends State<ProfileView> {
               }
             },
           ),
-          ProfileItemWidget(title: 'Saved Search'),
-          ProfileItemWidget(title: 'Favorite Search'),
+            ProfileItemWidget(
+            title: 'Saved Search',
+            onTap: () {
+              if (Storage.instance.getToken() != null) {
+                Get.toNamed(Routes.savedSearchScreen);
+              } else {
+                Get.toNamed(Routes.loginScreen);
+              }
+            },
+          ),
+          ProfileItemWidget(
+            title: 'Favorite Cars',
+            onTap: () {
+              if (Storage.instance.getToken() != null) {
+                Get.toNamed(Routes.favoriteCarsScreen);
+              } else {
+                Get.toNamed(Routes.loginScreen);
+              }
+            },
+          ),
           ProfileItemWidget(
             title: 'Booked Test Drives',
             onTap: () {

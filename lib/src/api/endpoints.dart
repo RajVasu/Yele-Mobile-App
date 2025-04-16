@@ -34,4 +34,6 @@ class Endpoints {
   static const String carBrandList = '$baseUrl/api/v1/user/car_brand_list';
   static const String carModelList = '$baseUrl/api/v1/user/car_model_list';
   static const String carTypeList = '$baseUrl/api/v1/user/car_type_list';
+  static const String carList = '$baseUrl/api/v1/user/car_list';
+  static const String carDetail = '$baseUrl/api/v1/user/car_detail';
 }

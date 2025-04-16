@@ -20,17 +20,24 @@ import 'package:yele/src/features/dealer/dealer_home/screen/dealer_home_screen.d
 import 'package:yele/src/features/driver/driver_home/bindings/driver_home_bindings.dart';
 import 'package:yele/src/features/driver/driver_home/screen/driver_home_screen.dart';
 import 'package:yele/src/features/onboarding/splash_screen.dart';
-import 'package:yele/src/features/user/booked%20test%20drives/bindings/booked_test_drives_bindings.dart';
-import 'package:yele/src/features/user/booked%20test%20drives/screens/booked_test_drives_screen.dart';
+import 'package:yele/src/features/user/book_test_drive_screen/bindings/book_test_drive_bindings.dart';
+import 'package:yele/src/features/user/book_test_drive_screen/screens/book_test_drive_screen.dart';
+import 'package:yele/src/features/user/book_test_drive_screen/screens/confirmation_screen.dart';
+import 'package:yele/src/features/user/book_test_drive_screen/screens/driver_progress_screen.dart';
+import 'package:yele/src/features/user/booked_test_drives/bindings/booked_test_drives_bindings.dart';
+import 'package:yele/src/features/user/booked_test_drives/screens/booked_test_drives_screen.dart';
 import 'package:yele/src/features/user/car/bindings/car_bindings.dart';
 import 'package:yele/src/features/user/car/screen/car_detail_screen.dart';
 import 'package:yele/src/features/user/dashboard/bindings/dashboard_bindings.dart';
 import 'package:yele/src/features/user/dashboard/screen/dashboard_screen.dart';
 import 'package:yele/src/features/user/filter/bindings/filter_bindings.dart';
 import 'package:yele/src/features/user/filter/screens/filter_screen.dart';
+import 'package:yele/src/features/user/in_depth_car_reviews/screens/in_depth_car_reviews_screen.dart';
 import 'package:yele/src/features/user/profile/bindings/profile_bindings.dart';
+import 'package:yele/src/features/user/profile/screen/favorites_cars_screen.dart';
 import 'package:yele/src/features/user/profile/screen/my_account_screen.dart';
 import 'package:yele/src/features/user/profile/screen/reset_password_screen.dart';
+import 'package:yele/src/features/user/profile/screen/saved_search_screen.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -138,6 +145,41 @@ class AppPages {
       transition: transition,
       binding: FilterBindings(),
     ),
+      GetPage(
+      name: Routes.bookTestDriveScreen,
+      page: () => BookTestDriveScreen(),
+      transition: transition,
+      binding: BookTestDriveBindings(),
+    ),
+    GetPage(
+      name: Routes.confirmationScreen,
+      page: () => ConfirmationScreen(),
+      transition: transition,
+    ),
+    GetPage(
+      name: Routes.driverProgressScreen,
+      page: () => DriverProgressScreen(),
+      transition: transition,
+    ),
+    GetPage(
+      name: Routes.savedSearchScreen,
+      page: () => SavedSearchScreen(),
+      transition: transition,
+      binding: ProfileBindings(),
+    ),
+    GetPage(
+      name: Routes.favoriteCarsScreen,
+      page: () => FavoriteCarsScreen(),
+      transition: transition,
+      binding: ProfileBindings(),
+    ),
+    GetPage(
+      name: Routes.inDepthCarReviewsScreen,
+      page: () => InDepthCarReviewsScreen(),
+      transition: transition,
+      binding: ProfileBindings(),
+    ),
+
 
     /// Role - Dealer
     GetPage(

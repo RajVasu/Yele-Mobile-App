@@ -1070,6 +1070,14 @@ class Assets {
   /// assets/icons/camera.png
   static const String assetsIconsCamera = "assets/icons/camera.png";
 
+  /// Assets for assetsIconsCheckmark
+  /// assets/icons/checkmark.png
+  static const String assetsIconsCheckmark = "assets/icons/checkmark.png";
+
+  /// Assets for assetsIconsClockBorder
+  /// assets/icons/clockBorder.png
+  static const String assetsIconsClockBorder = "assets/icons/clockBorder.png";
+
   /// Assets for assetsIconsDatePicker
   /// assets/icons/datePicker.png
   static const String assetsIconsDatePicker = "assets/icons/datePicker.png";
@@ -1142,6 +1150,10 @@ class Assets {
   /// assets/icons/manual.png
   static const String assetsIconsManual = "assets/icons/manual.png";
 
+  /// Assets for assetsIconsMessage
+  /// assets/icons/message.png
+  static const String assetsIconsMessage = "assets/icons/message.png";
+
   /// Assets for assetsIconsMoreOptions
   /// assets/icons/moreOptions.png
   static const String assetsIconsMoreOptions = "assets/icons/moreOptions.png";
@@ -1153,6 +1165,10 @@ class Assets {
   /// Assets for assetsIconsNext
   /// assets/icons/next.png
   static const String assetsIconsNext = "assets/icons/next.png";
+
+  /// Assets for assetsIconsNotification
+  /// assets/icons/notification.png
+  static const String assetsIconsNotification = "assets/icons/notification.png";
 
   /// Assets for assetsIconsOwner
   /// assets/icons/owner.png
@@ -1170,6 +1186,10 @@ class Assets {
   /// assets/icons/profile.png
   static const String assetsIconsProfile = "assets/icons/profile.png";
 
+  /// Assets for assetsIconsSaved
+  /// assets/icons/saved.png
+  static const String assetsIconsSaved = "assets/icons/saved.png";
+
   /// Assets for assetsIconsSearch
   /// assets/icons/search.png
   static const String assetsIconsSearch = "assets/icons/search.png";
@@ -1182,9 +1202,17 @@ class Assets {
   /// assets/icons/search_locate.png
   static const String assetsIconsSearchLocate = "assets/icons/search_locate.png";
 
+  /// Assets for assetsIconsSelectLocation
+  /// assets/icons/selectLocation.png
+  static const String assetsIconsSelectLocation = "assets/icons/selectLocation.png";
+
   /// Assets for assetsIconsTime
   /// assets/icons/time.png
   static const String assetsIconsTime = "assets/icons/time.png";
+
+  /// Assets for assetsIconsUnsaved
+  /// assets/icons/unsaved.png
+  static const String assetsIconsUnsaved = "assets/icons/unsaved.png";
 
   /// Assets for assetsIconsUsedCar
   /// assets/icons/used_car.png
@@ -1238,6 +1266,10 @@ class Assets {
   /// assets/images/carOnRoad.png
   static const String assetsImagesCarOnRoad = "assets/images/carOnRoad.png";
 
+  /// Assets for assetsImagesConfirmation
+  /// assets/images/confirmation.png
+  static const String assetsImagesConfirmation = "assets/images/confirmation.png";
+
   /// Assets for assetsImagesCross
   /// assets/images/cross.png
   static const String assetsImagesCross = "assets/images/cross.png";
@@ -1245,6 +1277,10 @@ class Assets {
   /// Assets for assetsImagesDelete
   /// assets/images/delete.png
   static const String assetsImagesDelete = "assets/images/delete.png";
+
+  /// Assets for assetsImagesFavCars
+  /// assets/images/favCars.png
+  static const String assetsImagesFavCars = "assets/images/favCars.png";
 
   /// Assets for assetsImagesNewCar
   /// assets/images/new_car.png
@@ -1257,6 +1293,10 @@ class Assets {
   /// Assets for assetsImagesNoInternet
   /// assets/images/no_internet.png
   static const String assetsImagesNoInternet = "assets/images/no_internet.png";
+
+  /// Assets for assetsImagesSavedSearch
+  /// assets/images/savedSearch.png
+  static const String assetsImagesSavedSearch = "assets/images/savedSearch.png";
 
   /// Assets for assetsImagesUsedCar
   /// assets/images/used_car.png

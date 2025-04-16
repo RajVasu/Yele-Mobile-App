@@ -17,6 +17,7 @@ class CustomButton extends StatelessWidget {
   final FontWeight? fontWeight;
   final Color? borderColor;
   final double? borderWidth;
+  final Gradient? gradient;
   const CustomButton({
     super.key,
     required this.text,
@@ -31,6 +32,7 @@ class CustomButton extends StatelessWidget {
     this.borderWidth,
     this.margin,
     this.isLoading = false,
+    this.gradient,
   });
 
   @override
@@ -43,6 +45,7 @@ class CustomButton extends StatelessWidget {
         // height: 56,
         alignment: Alignment.center,
         decoration: BoxDecoration(
+          gradient: gradient,
           border: Border.all(
             color: borderColor ?? Colors.transparent,
             width: borderWidth ?? 0.0,

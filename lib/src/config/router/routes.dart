@@ -22,6 +22,14 @@ class Routes {
   static const carDetailScreen = '/car_detail_screen';
   static const bookedTestDrivesScreen = '/booked_test_drives_screen';
  static const filterScreen = '/filter_screen';
+  static const bookTestDriveScreen = '/book_test_drive_screen';
+  static const confirmationScreen = '/confirmation_screen';
+  static const driverProgressScreen = '/driver_progress_screen';
+  static const savedSearchScreen = '/saved_search_screen';
+  static const favoriteCarsScreen = '/favorite_cars_screen';
+  static const inDepthCarReviewsScreen = '/in_depth_car_reviews_screen';
+
+ 
 
   /// Role - Dealer
   static const dealerHomeScreen = '/dealer_home_screen';

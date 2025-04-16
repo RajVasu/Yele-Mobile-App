@@ -138,6 +138,7 @@ class AuthRepository {
         'address': address,
         'password': password,
         'guardian_name': guardianName,
+        'device_type': 'mobile,',
       };
       final mediaType = getFileMediaType(userLicense);
       MultipartFile fileUserLicence = await MultipartFile.fromFile(
@@ -244,6 +245,7 @@ class AuthRepository {
         'phone_number': phoneNumber,
         'user_role': 2,
         'comment': comment,
+        'device_type': 'mobile,',
       };
 
       final response = await _apiClient.post(
@@ -296,6 +298,7 @@ class AuthRepository {
         'password': password,
         'username': userName,
         'dealer': dealer,
+        'device_type': 'mobile,',
       };
       final mediaType = getFileMediaType(driverLicense);
       MultipartFile fileUserLicence = await MultipartFile.fromFile(

@@ -139,7 +139,8 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
               );
             },
           ),
-          if (_profileController.userData.value.guardianName! != "") ...[
+          if (_profileController.userData.value.guardianName != null &&
+              _profileController.userData.value.guardianName != "") ...[
             GapH(1.h),
             CustomTextfield(
               displayColor: AppColors.greyColor,

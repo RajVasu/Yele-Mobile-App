@@ -133,6 +133,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
   static const String gLicenseType = 'User Guardian License';
   static const String userImage = 'User Image';
 
+  static const String serach = 'Serach';
 
   // ***************************************** Role - Driver App  ***************************************** //
 

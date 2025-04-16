@@ -28,12 +28,7 @@ class CustomAssetImage extends StatelessWidget {
     return SizedBox(
       height: height,
       width: width,
-      child: Image.asset(
-        image,
-        key: imageKey,
-        fit: fit,
-        color: color,
-      ),
+      child: Image.asset(image, key: imageKey, fit: fit, color: color),
     );
   }
 }
@@ -47,9 +42,9 @@ class CustomNetworkImage extends StatelessWidget {
   final Color? color;
   const CustomNetworkImage({
     super.key,
+    required this.image,
     this.height,
     this.width,
-    required this.image,
     this.fit,
     this.imageKey,
     this.color,
@@ -59,35 +54,43 @@ class CustomNetworkImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return image != null
         ? SizedBox(
-            height: height,
-            width: width,
-            child: Image.network(
-              image,
-              key: imageKey,
-              fit: fit,
-              color: color,
-            ),
-          )
+          height: height,
+          width: width,
+          child: Image.network(image, key: imageKey, fit: fit, color: color),
+        )
         : CustomNoImage();
   }
 }
 
 class CustomNoImage extends StatelessWidget {
   double? radius;
-  CustomNoImage({super.key, this.radius});
+  final double? height;
+  final double? width;
+
+  final BoxFit? fit;
+  final Key? imageKey;
+  final Color? color;
+  CustomNoImage({
+    super.key,
+    this.radius,
+    this.height,
+    this.width,
+    this.fit,
+    this.imageKey,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      height: double.infinity,
+      width: width ?? double.infinity,
+      height: height ?? double.infinity,
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-          color: AppColors.appColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(radius ?? 10.sp),
-          border: Border.all(
-            color: AppColors.appColor,
-          )),
+        color: AppColors.appColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(radius ?? 10.sp),
+        border: Border.all(color: AppColors.appColor),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -96,12 +99,12 @@ class CustomNoImage extends StatelessWidget {
           Image.asset(
             Assets.assetsImagesNoImageHere,
             scale: 5,
+            key: imageKey,
+            fit: fit,
+            color: color,
           ),
           GapH(1.h),
-          CustomText(
-            text: 'No Image here',
-            color: AppColors.appColor,
-          )
+          CustomText(text: 'No Image here', color: AppColors.appColor),
         ],
       ),
     );

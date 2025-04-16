@@ -33,6 +33,7 @@ class UserHomeController extends GetxController {
       return;
     }
     carBrandList.addAll(result.data.toList());
+    update();
   }
 
   Future<void> getCarModelListData() async {
@@ -44,6 +45,7 @@ class UserHomeController extends GetxController {
       return;
     }
     carModelList.addAll(result.data.toList());
+    update();
   }
 
   Future<void> getBrowseTypeData() async {
@@ -55,5 +57,6 @@ class UserHomeController extends GetxController {
       return;
     }
     browseTypeList.addAll(result.data.toList());
+    update();
   }
 }

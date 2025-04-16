@@ -43,6 +43,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       label: 'Used Car',
       icon: Assets.assetsIconsUsedCar,
       screen: UsedCarScreen(),
+      
     ),
     BottomItem(
       label: 'Profile',

@@ -27,7 +27,7 @@ class _ExploreOptionWidgetState extends State<ExploreOptionWidget> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.topRight,
-          colors: [const Color(0xFF3FA9F5), const Color(0xFF3CC9E1)],
+          colors: AppColors.gradient.colors,
         ),
         borderRadius: BorderRadius.circular(15.sp),
       ),
@@ -68,12 +68,15 @@ class _ExploreOptionWidgetState extends State<ExploreOptionWidget> {
               borderRadius: BorderRadius.circular(15.sp),
             ),
             child: Obx(
-              () => currentPage.value == 0
-                  ? PaginatedCarBrandView(
-                      carBrandList: _userHomeController.carBrandList)
-                  : currentPage.value == 1
+              () =>
+                  currentPage.value == 0
+                      ? PaginatedCarBrandView(
+                        carBrandList: _userHomeController.carBrandList,
+                      )
+                      : currentPage.value == 1
                       ? PaginatedCarModelView(
-                          carModel: _userHomeController.carModelList)
+                        carModel: _userHomeController.carModelList,
+                      )
                       : PaginationedCarYear(),
             ),
           ),
@@ -92,18 +95,20 @@ class _ExploreOptionWidgetState extends State<ExploreOptionWidget> {
             color:
                 index == currentPage.value ? Colors.white : Colors.transparent,
             border: Border.all(
-              color: index == currentPage.value
-                  ? Colors.transparent
-                  : Colors.white,
+              color:
+                  index == currentPage.value
+                      ? Colors.transparent
+                      : Colors.white,
             ),
             borderRadius: BorderRadius.circular(20.sp),
           ),
           child: Center(
             child: CustomText(
               text: text,
-              color: index == currentPage.value
-                  ? AppColors.appColor
-                  : Colors.white,
+              color:
+                  index == currentPage.value
+                      ? AppColors.appColor
+                      : Colors.white,
               fontSize: 14.sp,
             ),
           ),
@@ -159,28 +164,29 @@ class PaginatedCarModelView extends StatelessWidget {
               return Wrap(
                 runSpacing: 1.h,
                 spacing: 2.w,
-                children: pageItems.map((e) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 1.h,
-                      horizontal: 3.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(
-                        color: AppColors.greyColor.withOpacity(0.3),
-                      ),
-                      borderRadius: BorderRadius.circular(20.sp),
-                    ),
-                    child: CustomText(
-                      text: e.carModel!,
-                      color: AppColors.darkGreyColor,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }).toList(),
+                children:
+                    pageItems.map((e) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 1.h,
+                          horizontal: 3.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(
+                            color: AppColors.greyColor.withOpacity(0.3),
+                          ),
+                          borderRadius: BorderRadius.circular(20.sp),
+                        ),
+                        child: CustomText(
+                          text: e.carModel!,
+                          color: AppColors.darkGreyColor,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }).toList(),
               );
             },
           ),
@@ -249,17 +255,11 @@ class PaginatedCarBrandView extends StatelessWidget {
                       padding: EdgeInsets.all(15.sp),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                        ),
+                        border: Border.all(color: Colors.grey.shade300),
                       ),
                       child: Image.network(
                         '${Endpoints.baseUrl}${carBrandList[brandIndex].brandLogo}',
-                        errorBuilder: (
-                          context,
-                          error,
-                          stackTrace,
-                        ) {
+                        errorBuilder: (context, error, stackTrace) {
                           return Icon(Icons.error);
                         },
                       ),
@@ -275,11 +275,8 @@ class PaginatedCarBrandView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             (carBrandList.length / 8).ceil(),
-            (index) => Obx(
-              () => _buildPageIndicator(
-                index == currentIndex.value,
-              ),
-            ),
+            (index) =>
+                Obx(() => _buildPageIndicator(index == currentIndex.value)),
           ),
         ),
       ],
@@ -292,9 +289,10 @@ class PaginatedCarBrandView extends StatelessWidget {
       height: 1.h,
       width: isActive ? 6.w : 2.w,
       decoration: BoxDecoration(
-        color: isActive
-            ? AppColors.appColor
-            : AppColors.greyColor.withOpacity(0.5),
+        color:
+            isActive
+                ? AppColors.appColor
+                : AppColors.greyColor.withOpacity(0.5),
         borderRadius: BorderRadius.circular(15.sp),
       ),
     );
@@ -310,8 +308,10 @@ class PaginationedCarYear extends StatefulWidget {
 
 class _PaginationedCarYearState extends State<PaginationedCarYear> {
   final PageController _pageController = PageController();
-  List<int> carYearList =
-      List.generate(2025 - 2000 + 1, (index) => 2000 + index);
+  List<int> carYearList = List.generate(
+    2025 - 2000 + 1,
+    (index) => 2000 + index,
+  );
   RxInt currentIndex = 0.obs;
 
   final int itemsPerPage = 16;
@@ -319,12 +319,14 @@ class _PaginationedCarYearState extends State<PaginationedCarYear> {
   List<List<int>> getPagedItems() {
     List<List<int>> pages = [];
     for (int i = 0; i < carYearList.length; i += itemsPerPage) {
-      pages.add(carYearList.sublist(
-        i,
-        i + itemsPerPage > carYearList.length
-            ? carYearList.length
-            : i + itemsPerPage,
-      ));
+      pages.add(
+        carYearList.sublist(
+          i,
+          i + itemsPerPage > carYearList.length
+              ? carYearList.length
+              : i + itemsPerPage,
+        ),
+      );
     }
     return pages;
   }
@@ -348,28 +350,29 @@ class _PaginationedCarYearState extends State<PaginationedCarYear> {
               return Wrap(
                 runSpacing: 1.h,
                 spacing: 3.w,
-                children: pageItems.map((e) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 1.h,
-                      horizontal: 5.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(
-                        color: AppColors.greyColor.withOpacity(0.3),
-                      ),
-                      borderRadius: BorderRadius.circular(20.sp),
-                    ),
-                    child: CustomText(
-                      text: e.toString(),
-                      color: AppColors.darkGreyColor,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }).toList(),
+                children:
+                    pageItems.map((e) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 1.h,
+                          horizontal: 5.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(
+                            color: AppColors.greyColor.withOpacity(0.3),
+                          ),
+                          borderRadius: BorderRadius.circular(20.sp),
+                        ),
+                        child: CustomText(
+                          text: e.toString(),
+                          color: AppColors.darkGreyColor,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }).toList(),
               );
             },
           ),
@@ -378,11 +381,8 @@ class _PaginationedCarYearState extends State<PaginationedCarYear> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             (carYearList.length / 16).ceil(),
-            (index) => Obx(
-              () => _buildPageIndicator(
-                index == currentIndex.value,
-              ),
-            ),
+            (index) =>
+                Obx(() => _buildPageIndicator(index == currentIndex.value)),
           ),
         ),
       ],
@@ -395,9 +395,10 @@ class _PaginationedCarYearState extends State<PaginationedCarYear> {
       height: 1.h,
       width: isActive ? 6.w : 2.w,
       decoration: BoxDecoration(
-        color: isActive
-            ? AppColors.appColor
-            : AppColors.greyColor.withOpacity(0.5),
+        color:
+            isActive
+                ? AppColors.appColor
+                : AppColors.greyColor.withOpacity(0.5),
         borderRadius: BorderRadius.circular(15.sp),
       ),
     );
