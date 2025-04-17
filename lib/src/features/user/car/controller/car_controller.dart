@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:yele/src/config/constants/assets.dart';
+import 'package:yele/src/core/utils/enums.dart';
 import 'package:yele/src/core/widgets/constant_widgets.dart';
 import 'package:yele/src/features/user/car/model/get_car_model.dart';
 import 'package:yele/src/repository/user/user_car_repository.dart';
@@ -23,7 +24,7 @@ class CarController extends GetxController {
   ];
 
   RxBool agreeRequestInfo = false.obs;
-
+  Rx<FormzStatus> formzStatus = FormzStatus.pure.obs;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController contactNoController = TextEditingController();
@@ -33,13 +34,14 @@ class CarController extends GetxController {
   var getCarData = GetCarModel().obs;
 
   Future<void> getCarBrandListData({carId}) async {
+    formzStatus.value = FormzStatus.loading;
     final result = await _carRepository.getCarData(carId: carId);
     if (result.isFailure) {
       errorSnackBar(message: result.failure.message);
       return;
     }
     getCarData.value = result.data;
-
+    formzStatus.value = FormzStatus.pure;
     update();
   }
 }

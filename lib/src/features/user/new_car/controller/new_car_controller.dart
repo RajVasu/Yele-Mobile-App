@@ -16,13 +16,28 @@ class NewCarController extends GetxController {
   RxBool paginationselected = false.obs;
   RxInt currentPageIndex = 0.obs;
   var getCarData = GetCarListModel().obs;
+
   @override
   void onInit() {
-    getCarBrandListData();
+    getNewCarListData();
     super.onInit();
   }
 
-  Future<void> getCarBrandListData() async {
+  Future<void> getNewCarListData({
+    List? carBrand,
+    List? carModel,
+    List? fuelType,
+    List? modelYear,
+    List? bodyType,
+    List? transmissions,
+    List? owners,
+    List? seats,
+    List? kmDriven,
+    List? color,
+    List? rto,
+    dynamic minPrice,
+    dynamic maxPrice,
+  }) async {
     currentPageIndex.value = 0;
     currentPageIndex.value = currentPageIndex.value + 1;
     newCarList.clear();
@@ -30,6 +45,19 @@ class NewCarController extends GetxController {
     final result = await _carRepository.getCarList(
       carType: 'New Car',
       page: currentPageIndex.value,
+      carModel: carModel,
+      carBrand: carBrand,
+      fuelType: fuelType,
+      modelYear: modelYear,
+      rto: rto,
+      bodyType: bodyType,
+      transmissions: transmissions,
+      owners: owners,
+      seats: seats,
+      kmDriven: kmDriven,
+      color: color,
+      maxPrice: maxPrice,
+      minPrice: minPrice,
     );
     if (result.isFailure) {
       errorSnackBar(message: result.failure.message);
@@ -46,7 +74,7 @@ class NewCarController extends GetxController {
     update();
   }
 
-  Future<void> getCarBrandListDataPagination() async {
+  Future<void> getNewCarListDataPagination() async {
     currentPageIndex.value = currentPageIndex.value + 1;
 
     final result = await _carRepository.getCarList(

@@ -37,7 +37,7 @@ class _NewCarViewState extends State<NewCarView> {
       body: Column(
         children: [
           GapH(2.h),
-          SearchCarWidget(),
+          SearchCarWidget(type: 'New Car'),
           GapH(2.h),
           Expanded(child: NewCarList()),
         ],

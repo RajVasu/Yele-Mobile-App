@@ -37,7 +37,7 @@ class _UsedCarListState extends State<UsedCarList> {
         if (_usedCarController.currentPageIndex.value <
             _usedCarController.getCarData.value.totalPages!) {
           _usedCarController.paginationselected.value = true;
-          _usedCarController.getCarBrandListDataPagination();
+          _usedCarController.getUsedCarListDataPagination();
           setState(() {
             Timer(const Duration(seconds: 5), () {
               setState(() {

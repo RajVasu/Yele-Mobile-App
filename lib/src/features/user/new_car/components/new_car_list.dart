@@ -37,7 +37,7 @@ class _NewCarListState extends State<NewCarList> {
         if (_newCarController.currentPageIndex.value <
             _newCarController.getCarData.value.totalPages!) {
           _newCarController.paginationselected.value = true;
-          _newCarController.getCarBrandListDataPagination();
+          _newCarController.getNewCarListDataPagination();
           setState(() {
             Timer(const Duration(seconds: 5), () {
               setState(() {

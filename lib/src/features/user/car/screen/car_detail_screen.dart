@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:yele/src/config/constants/app_colors.dart';
 import 'package:yele/src/core/screens/no_internet_screen.dart';
+import 'package:yele/src/core/utils/enums.dart';
 import 'package:yele/src/core/widgets/custom_button.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
 import 'package:yele/src/core/widgets/gap.dart';
@@ -45,9 +46,18 @@ class _CarDetailViewState extends State<CarDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder(
+    return GetBuilder<CarController>(
       init: CarController(),
       builder: (context) {
+        if (_carController.formzStatus.value == FormzStatus.loading) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: AppColors.blackColor,
+              ),
+            ),
+          );
+        }
         return Scaffold(
           body: NestedScrollView(
             headerSliverBuilder: (

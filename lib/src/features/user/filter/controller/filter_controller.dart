@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:yele/src/features/user/filter/screens/filter_screen.dart';
+import 'package:yele/src/core/utils/enums.dart';
+import 'package:yele/src/core/widgets/constant_widgets.dart';
+import 'package:yele/src/features/user/filter/components/filter_checkbox_list_widget.dart';
+import 'package:yele/src/features/user/filter/model/get_filter_model.dart';
+import 'package:yele/src/features/user/new_car/controller/new_car_controller.dart';
+import 'package:yele/src/features/user/used_car/controller/used_car_controller.dart';
+import 'package:yele/src/repository/user/user_car_repository.dart';
 
 class FilterController extends GetxController {
+  final UserCarRepository _carRepository = UserCarRepository();
+  Rx<FormzStatus> formzStatus = FormzStatus.pure.obs;
   RxBool showMakeModelList = true.obs;
-
+  final UsedCarController _usedCarController = Get.find();
+  final NewCarController _newCarController = Get.find();
   RxBool showFuelFilters = false.obs;
   RxBool showModelYearFilters = false.obs;
   RxBool showFeatureFilters = false.obs;
@@ -17,127 +26,383 @@ class FilterController extends GetxController {
   RxBool showColorFilters = false.obs;
   RxBool showBrandsList = true.obs;
 
-  List<FilterListModel> makeModelList = <FilterListModel>[
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-  ];
+  List<FilterListModel> makeModelList = <FilterListModel>[];
 
-  List<FilterListModel> brandsList = <FilterListModel>[
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-    FilterListModel(title: 'Volkswagen Ameo', clicked: false.obs),
-  ];
+  List<FilterListModel> brandsList = <FilterListModel>[];
 
-  List<FilterListModel> fuelFilters = [
-    FilterListModel(title: 'Petrol', clicked: false.obs),
-    FilterListModel(title: 'Diesel', clicked: false.obs),
-    FilterListModel(title: 'CNG', clicked: false.obs),
-    FilterListModel(title: 'Electric', clicked: false.obs),
-    FilterListModel(title: 'Hybrid', clicked: false.obs),
-  ];
+  List<FilterListModel> fuelFilters = [];
 
-  List<FilterListModel> modelYearFilters = [
-    FilterListModel(title: '2023', clicked: false.obs),
-    FilterListModel(title: '2022', clicked: false.obs),
-    FilterListModel(title: '2021', clicked: false.obs),
-    FilterListModel(title: '2020', clicked: false.obs),
-    FilterListModel(title: '2019', clicked: false.obs),
-    FilterListModel(title: '2018', clicked: false.obs),
-    FilterListModel(title: '2017', clicked: false.obs),
-  ];
+  List<FilterListModel> modelYearFilters = [];
 
-  List<FilterListModel> featureFilters = [
-    FilterListModel(title: 'Sunroof', clicked: false.obs),
-    FilterListModel(title: 'Bluetooth', clicked: false.obs),
-    FilterListModel(title: 'Leather Seats', clicked: false.obs),
-    FilterListModel(title: 'Navigation System', clicked: false.obs),
-    FilterListModel(title: 'Rear Camera', clicked: false.obs),
-    FilterListModel(title: 'Parking Sensors', clicked: false.obs),
-    FilterListModel(title: 'Heated Seats', clicked: false.obs),
-    FilterListModel(title: 'Apple CarPlay', clicked: false.obs),
-  ];
+  List<FilterListModel> featureFilters = [];
 
-  List<FilterListModel> rtoFilters = [
-    FilterListModel(title: 'Delhi', clicked: false.obs),
-    FilterListModel(title: 'Mumbai', clicked: false.obs),
-    FilterListModel(title: 'Bangalore', clicked: false.obs),
-    FilterListModel(title: 'Chennai', clicked: false.obs),
-    FilterListModel(title: 'Kolkata', clicked: false.obs),
-    FilterListModel(title: 'Hyderabad', clicked: false.obs),
-    FilterListModel(title: 'Pune', clicked: false.obs),
-    FilterListModel(title: 'Ahmedabad', clicked: false.obs),
-  ];
+  List<FilterListModel> rtoFilters = [];
 
-  List<FilterListModel> bodyTypeFilters = [
-    FilterListModel(title: 'Sedan', clicked: false.obs),
-    FilterListModel(title: 'SUV', clicked: false.obs),
-    FilterListModel(title: 'Hatchback', clicked: false.obs),
-    FilterListModel(title: 'Coupe', clicked: false.obs),
-    FilterListModel(title: 'Convertible', clicked: false.obs),
-    FilterListModel(title: 'Wagon', clicked: false.obs),
-    FilterListModel(title: 'Pickup', clicked: false.obs),
-  ];
+  List<FilterListModel> bodyTypeFilters = [];
 
-  List<FilterListModel> transmissionFilters = [
-    FilterListModel(title: 'Automatic', clicked: false.obs),
-    FilterListModel(title: 'Manual', clicked: false.obs),
-    FilterListModel(title: 'CVT', clicked: false.obs),
-    FilterListModel(title: 'Dual-clutch', clicked: false.obs),
-  ];
+  List<FilterListModel> transmissionFilters = [];
 
-  List<FilterListModel> ownerFilters = [
-    FilterListModel(title: '1st Owner', clicked: false.obs),
-    FilterListModel(title: '2nd Owner', clicked: false.obs),
-    FilterListModel(title: '3rd Owner', clicked: false.obs),
-    FilterListModel(title: 'More than 3 Owners', clicked: false.obs),
-  ];
+  List<FilterListModel> ownerFilters = [];
 
-  List<FilterListModel> seatFilters = [
-    FilterListModel(title: '2 Seater', clicked: false.obs),
-    FilterListModel(title: '4 Seater', clicked: false.obs),
-    FilterListModel(title: '5 Seater', clicked: false.obs),
-    FilterListModel(title: '7 Seater', clicked: false.obs),
-    FilterListModel(title: '8 Seater', clicked: false.obs),
-  ];
+  List<FilterListModel> seatFilters = [];
 
-  List<FilterListModel> kmDrivenFilters = [
-    FilterListModel(title: 'Less than 10,000 km', clicked: false.obs),
-    FilterListModel(title: '10,000 - 30,000 km', clicked: false.obs),
-    FilterListModel(title: '30,000 - 50,000 km', clicked: false.obs),
-    FilterListModel(title: '50,000 - 75,000 km', clicked: false.obs),
-    FilterListModel(title: '75,000 - 100,000 km', clicked: false.obs),
-    FilterListModel(title: 'More than 100,000 km', clicked: false.obs),
-  ];
+  List<FilterListModel> kmDrivenFilters = [];
 
-  List<FilterListModel> colorFilters = [
-    FilterListModel(title: 'Red', clicked: false.obs),
-    FilterListModel(title: 'Black', clicked: false.obs),
-    FilterListModel(title: 'White', clicked: false.obs),
-    FilterListModel(title: 'Blue', clicked: false.obs),
-    FilterListModel(title: 'Silver', clicked: false.obs),
-    FilterListModel(title: 'Grey', clicked: false.obs),
-    FilterListModel(title: 'Green', clicked: false.obs),
-    FilterListModel(title: 'Yellow', clicked: false.obs),
-    FilterListModel(title: 'Orange', clicked: false.obs),
-  ];
+  List<FilterListModel> colorFilters = [];
 
   RxBool showBudgetSlider = true.obs;
   RxDouble currentBudget = 100000.0.obs;
 
-  RangeValues budgetValues = RangeValues(100000, 350000);
-  /*  final List<double> budgetValues = [
-    100000,
-    150000,
-    200000,
-    250000,
-    300000,
-    350000,
-  ]; */
+  RxDouble minPrice = 0.0.obs;
+  RxDouble maxPrice = 0.0.obs;
+  Rx<RangeValues> budgetValues = RangeValues(0, 10).obs;
+  var getFilterData = GetFilterModel().obs;
+
+  List<String> makeModelFilterList = [];
+  List<String> brandsFilterList = [];
+  List<String> fuelFiltersList = [];
+  List<String> modelYearFiltersList = [];
+  List<String> rtoFiltersList = [];
+  List<String> bodyTypeFiltersList = [];
+  List<String> transmissionFiltersList = [];
+  List<String> ownerFiltersList = [];
+  List<String> seatFiltersList = [];
+  List<String> kmDrivenFiltersList = [];
+  List<String> colorFiltersList = [];
+
+  RxList<String> mainList = <String>[].obs;
+  @override
+  void onInit() {
+    getCarFilterData();
+    super.onInit();
+  }
+
+  Future<void> getCarFilterData() async {
+    clearData();
+    formzStatus.value = FormzStatus.loading;
+    final result = await _carRepository.getFilterData();
+    if (result.isFailure) {
+      errorSnackBar(message: result.failure.message);
+      return;
+    }
+    getFilterData.value = result.data;
+    minPrice.value =
+        double.tryParse(
+          getFilterData.value.budget!.minPrice!
+              .replaceAll(',', '')
+              .replaceAll('\$', ''),
+        ) ??
+        0;
+    maxPrice.value =
+        double.tryParse(
+          getFilterData.value.budget!.maxPrice!
+              .replaceAll(',', '')
+              .replaceAll('\$', ''),
+        ) ??
+        0;
+
+    if (minPrice.value <= maxPrice.value) {
+      budgetValues.value = RangeValues(minPrice.value, maxPrice.value);
+    } else {
+      budgetValues.value = RangeValues(0, 10);
+    }
+    for (var element in getFilterData.value.model!) {
+      makeModelList.add(
+        FilterListModel(title: element.modelName!, clicked: false.obs),
+      );
+    }
+    for (var element in getFilterData.value.brand!) {
+      brandsList.add(
+        FilterListModel(title: element.brandName!, clicked: false.obs),
+      );
+    }
+    for (var element in getFilterData.value.fuelType!) {
+      fuelFilters.add(
+        FilterListModel(title: element.fuelTypeName!, clicked: false.obs),
+      );
+    }
+    for (var element in getFilterData.value.modelYear!) {
+      modelYearFilters.add(
+        FilterListModel(
+          title: element.modelYear.toString(),
+          clicked: false.obs,
+        ),
+      );
+    }
+    for (var element in getFilterData.value.rto!) {
+      rtoFilters.add(
+        FilterListModel(title: element.rtoName.toString(), clicked: false.obs),
+      );
+    }
+    for (var element in getFilterData.value.bodyType!) {
+      bodyTypeFilters.add(
+        FilterListModel(title: element.typeName.toString(), clicked: false.obs),
+      );
+    }
+    for (var element in getFilterData.value.transmission!) {
+      transmissionFilters.add(
+        FilterListModel(
+          title: element.transmissionType.toString(),
+          clicked: false.obs,
+        ),
+      );
+    }
+    for (var element in getFilterData.value.owners!) {
+      ownerFilters.add(
+        FilterListModel(title: element.owner.toString(), clicked: false.obs),
+      );
+    }
+    for (var element in getFilterData.value.seats!) {
+      seatFilters.add(
+        FilterListModel(
+          title: element.seatNumber.toString(),
+          clicked: false.obs,
+        ),
+      );
+    }
+    for (var element in getFilterData.value.kmsDriven!) {
+      kmDrivenFilters.add(
+        FilterListModel(
+          title: element.kmsDriven.toString(),
+          clicked: false.obs,
+        ),
+      );
+    }
+    for (var element in getFilterData.value.color!) {
+      colorFilters.add(
+        FilterListModel(
+          title: element.colorName.toString(),
+          clicked: false.obs,
+        ),
+      );
+    }
+
+    formzStatus.value = FormzStatus.pure;
+    update();
+  }
+
+  clearData() {
+    if (mainList.isNotEmpty) {
+      checkDataList();
+    } else {
+      checkDataList();
+      makeModelList.clear();
+      brandsList.clear();
+      fuelFilters.clear();
+      modelYearFilters.clear();
+      rtoFilters.clear();
+      bodyTypeFilters.clear();
+      transmissionFilters.clear();
+      ownerFilters.clear();
+      seatFilters.clear();
+      kmDrivenFilters.clear();
+      colorFilters.clear();
+    }
+
+    showMakeModelList = false.obs;
+    showFuelFilters = false.obs;
+    showModelYearFilters = false.obs;
+    showRtoFilters = false.obs;
+    showBodyTypeFilters = false.obs;
+    showTransmissionFilters = false.obs;
+    showOwnerFilters = false.obs;
+    showSeatFilters = false.obs;
+    showKmDrivenFilters = false.obs;
+    showColorFilters = false.obs;
+    showBrandsList = false.obs;
+    showBudgetSlider = false.obs;
+    minPrice = 0.0.obs;
+    maxPrice = 0.0.obs;
+    budgetValues = RangeValues(0, 10).obs;
+  }
+
+  addSearchData({required String data, required String type}) {
+    if (type == 'model') {
+      makeModelFilterList.add(data);
+    } else if (type == 'brand') {
+      brandsFilterList.add(data);
+    } else if (type == 'fuel_type') {
+      fuelFiltersList.add(data);
+    } else if (type == 'model_year') {
+      modelYearFiltersList.add(data);
+    } else if (type == 'rto') {
+      rtoFiltersList.add(data);
+    } else if (type == 'body_type') {
+      bodyTypeFiltersList.add(data);
+    } else if (type == 'transmission') {
+      transmissionFiltersList.add(data);
+    } else if (type == 'owners') {
+      ownerFiltersList.add(data);
+    } else if (type == 'seats') {
+      seatFiltersList.add(data);
+    } else if (type == 'kms_driven') {
+      kmDrivenFiltersList.add(data);
+    } else if (type == 'color') {
+      colorFiltersList.add(data);
+    }
+    update();
+  }
+
+  removeSearchData({required String data, required String type}) {
+    if (type == 'model') {
+      makeModelFilterList.remove(data);
+    } else if (type == 'brand') {
+      brandsFilterList.remove(data);
+    } else if (type == 'fuel_type') {
+      fuelFiltersList.remove(data);
+    } else if (type == 'model_year') {
+      modelYearFiltersList.remove(data);
+    } else if (type == 'rto') {
+      rtoFiltersList.remove(data);
+    } else if (type == 'body_type') {
+      bodyTypeFiltersList.remove(data);
+    } else if (type == 'transmission') {
+      transmissionFiltersList.remove(data);
+    } else if (type == 'owners') {
+      ownerFiltersList.remove(data);
+    } else if (type == 'seats') {
+      seatFiltersList.remove(data);
+    } else if (type == 'kms_driven') {
+      kmDrivenFiltersList.remove(data);
+    } else if (type == 'color') {
+      colorFiltersList.remove(data);
+    }
+
+    update();
+  }
+
+  addMianData({type}) {
+    mainList.clear();
+    mainList.addAll([
+      ...makeModelFilterList,
+      ...brandsFilterList,
+      ...fuelFiltersList,
+      ...modelYearFiltersList,
+      ...rtoFiltersList,
+      ...bodyTypeFiltersList,
+      ...transmissionFiltersList,
+      ...ownerFiltersList,
+      ...seatFiltersList,
+      ...kmDrivenFiltersList,
+      ...colorFiltersList,
+    ]);
+    print(mainList);
+    if (type == 'Used Car') {
+      _usedCarController.getUsedCarListData();
+    } else {
+      _newCarController.getNewCarListData(
+        carModel: makeModelFilterList.toList(),
+        carBrand: brandsFilterList.toList(),
+        fuelType: fuelFiltersList.toList(),
+        modelYear: modelYearFiltersList.toList(),
+        rto: rtoFiltersList.toList(),
+        bodyType: bodyTypeFiltersList.toList(),
+        transmissions: transmissionFiltersList.toList(),
+        owners: ownerFiltersList.toList(),
+        seats: seatFiltersList.toList(),
+        kmDriven: kmDrivenFiltersList.toList(),
+        color: colorFiltersList.toList(),
+        maxPrice: 0,
+        minPrice: 0,
+      );
+      Get.back();
+    }
+  }
+
+  removeMainData({required String data}) {
+    mainList.remove(data);
+    print(mainList);
+  }
+
+  checkDataList() {
+    makeModelFilterList.retainWhere((item) => mainList.contains(item));
+    brandsFilterList.retainWhere((item) => mainList.contains(item));
+    fuelFiltersList.retainWhere((item) => mainList.contains(item));
+    modelYearFiltersList.retainWhere((item) => mainList.contains(item));
+    rtoFiltersList.retainWhere((item) => mainList.contains(item));
+    bodyTypeFiltersList.retainWhere((item) => mainList.contains(item));
+    transmissionFiltersList.retainWhere((item) => mainList.contains(item));
+    ownerFiltersList.retainWhere((item) => mainList.contains(item));
+    seatFiltersList.retainWhere((item) => mainList.contains(item));
+    kmDrivenFiltersList.retainWhere((item) => mainList.contains(item));
+    colorFiltersList.retainWhere((item) => mainList.contains(item));
+
+    for (var filter in makeModelList) {
+      if (makeModelFilterList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in brandsList) {
+      if (brandsFilterList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in fuelFilters) {
+      if (fuelFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in modelYearFilters) {
+      if (modelYearFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in rtoFilters) {
+      if (rtoFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in bodyTypeFilters) {
+      if (bodyTypeFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in transmissionFilters) {
+      if (transmissionFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in ownerFilters) {
+      if (ownerFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in seatFilters) {
+      if (seatFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in kmDrivenFilters) {
+      if (kmDrivenFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+    for (var filter in colorFilters) {
+      if (colorFiltersList.contains(filter.title)) {
+        filter.clicked.value = true;
+      } else {
+        filter.clicked.value = false;
+      }
+    }
+  }
 }

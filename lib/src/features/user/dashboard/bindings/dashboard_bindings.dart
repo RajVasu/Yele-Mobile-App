@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:yele/src/features/user/dashboard/controller/dashboard_controller.dart';
+import 'package:yele/src/features/user/filter/controller/filter_controller.dart';
 import 'package:yele/src/features/user/home/controller/user_home_controller.dart';
 import 'package:yele/src/features/user/new_car/controller/new_car_controller.dart';
 import 'package:yele/src/features/user/profile/controller/profile_controller.dart';
@@ -13,5 +14,6 @@ class DashboardBindings extends Bindings {
     Get.put(UserHomeController(), permanent: true);
     Get.put(UsedCarController(), permanent: true);
     Get.put(NewCarController(), permanent: true);
+    Get.put(FilterController(), permanent: true);
   }
 }
