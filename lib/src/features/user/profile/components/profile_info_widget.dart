@@ -10,6 +10,7 @@ import 'package:yele/src/core/widgets/custom_button.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
 import 'package:yele/src/core/widgets/custom_text_field.dart';
 import 'package:yele/src/core/widgets/gap.dart';
+import 'package:yele/src/features/user/dashboard/controller/dashboard_controller.dart';
 import 'package:yele/src/features/user/profile/controller/profile_controller.dart';
 
 class ProfileInfoWidget extends StatefulWidget {
@@ -22,6 +23,7 @@ class ProfileInfoWidget extends StatefulWidget {
 
 class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
   final ProfileController _profileController = Get.find();
+  final DashboardController _dashboardController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -182,9 +184,11 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
     );
   }
 
-  void _onSaveDetailTap(BuildContext context) {
+  void _onSaveDetailTap(BuildContext context) async {
     if (!widget.formKey.currentState!.validate()) return;
     FocusManager.instance.primaryFocus?.unfocus();
-    _profileController.editProfile();
+    await _profileController.editProfile();
+
+    _dashboardController.selectedIndex.value = 0;
   }
 }

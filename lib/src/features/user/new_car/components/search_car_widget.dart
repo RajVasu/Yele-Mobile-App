@@ -26,6 +26,7 @@ class _SearchCarWidgetState extends State<SearchCarWidget> {
   final UsedCarController _usedCarController = Get.find();
   @override
   Widget build(BuildContext context) {
+    _filterController.matchBrand();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -70,7 +71,7 @@ class _SearchCarWidgetState extends State<SearchCarWidget> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          _filterController.mainList.clear(); // Clear the list
+                          _filterController.mainList.clear();
                           if (widget.type == 'Used Car') {
                             _usedCarController.getUsedCarListData();
                           } else {
@@ -120,6 +121,7 @@ class _SearchCarWidgetState extends State<SearchCarWidget> {
                                         _filterController.removeMainData(
                                           data:
                                               _filterController.mainList[index],
+                                          type: widget.type,
                                         );
                                       },
                                       child: Icon(
@@ -143,88 +145,6 @@ class _SearchCarWidgetState extends State<SearchCarWidget> {
               )
               : SizedBox.shrink(); // Return an empty widget if the list is empty
         }),
-        // if (_filterController.serchingList.isNotEmpty) ...[
-        //   GapH(1.5.h),
-        //   GetBuilder<FilterController>(
-        //     init: FilterController(),
-        //     builder: (context) {
-        //       return Row(
-        //         children: [
-        //           GestureDetector(
-        //             onTap: () {
-        //               _filterController.serchingList.clear();
-        //             },
-        //             child: Container(
-        //               padding: EdgeInsets.symmetric(
-        //                 horizontal: 3.w,
-        //                 vertical: 0.5.h,
-        //               ),
-        //               decoration: BoxDecoration(
-        //                 color: AppColors.appColor,
-        //                 borderRadius: BorderRadius.circular(10.sp),
-        //               ),
-        //               child: CustomText(
-        //                 text: 'Clear All',
-        //                 color: AppColors.whiteColor,
-        //               ),
-        //             ),
-        //           ),
-        //           GapW(1.5.w),
-        //           Expanded(
-        //             child: SizedBox(
-        //               // color: AppColors.appColor,
-        //               height: 3.5.h,
-
-        //               child: ListView.separated(
-        //                 scrollDirection: Axis.horizontal,
-        //                 shrinkWrap: true,
-        //                 padding: EdgeInsets.zero,
-        //                 itemBuilder: (context, index) {
-        //                   return Container(
-        //                     alignment: Alignment.center,
-        //                     padding: EdgeInsets.symmetric(
-        //                       horizontal: 3.w,
-        //                       // vertical: 0.5.h,
-        //                     ),
-
-        //                     decoration: BoxDecoration(
-        //                       color: const Color(0xFFE6E6E6),
-        //                       borderRadius: BorderRadius.circular(10.sp),
-        //                     ),
-        //                     child: Row(
-        //                       children: [
-        //                         CustomText(
-        //                           text: _filterController.serchingList[index],
-        //                           color: AppColors.darkGreyColor,
-        //                         ),
-        //                         GapW(4.w),
-        //                         GestureDetector(
-        //                           onTap: () {
-        //                             _filterController.removeSearchData(
-        //                               data:
-        //                                   _filterController.serchingList[index],
-        //                             );
-        //                           },
-        //                           child: Icon(
-        //                             Icons.close,
-        //                             color: AppColors.darkGreyColor,
-        //                             size: 18.sp,
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   );
-        //                 },
-        //                 separatorBuilder: (context, index) => GapW(1.5.w),
-        //                 itemCount: _filterController.serchingList.length,
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       );
-        //     },
-        //   ),
-        // ],
       ],
     );
   }

@@ -40,6 +40,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
         appBar: customAppBar(title: 'New Password'),
         body: Column(
           children: [
+            GapH(2.h),
             CustomText(
               text:
                   'Please make sure, your new password must be unique from previously used password',
@@ -98,6 +99,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 isLoading: forgotPasswordController.formzStatus.value.isLoading,
               ),
             ),
+            GapH(3.h),
           ],
         ),
       ),

@@ -17,6 +17,7 @@ import 'package:yele/src/core/widgets/custom_image.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
 import 'package:yele/src/core/widgets/custom_text_field.dart';
 import 'package:yele/src/core/widgets/gap.dart';
+import 'package:yele/src/core/widgets/no_data_widget.dart';
 import 'package:yele/src/features/user/car/model/get_car_list_model.dart';
 import 'package:yele/src/features/user/new_car/controller/new_car_controller.dart';
 
@@ -47,154 +48,169 @@ class _NewCarListState extends State<NewCarList> {
           });
         }
       },
-      child: ListView.separated(
-        padding: EdgeInsets.only(bottom: 2.h),
-        shrinkWrap: true,
+      child: GetBuilder<NewCarController>(
+        init: NewCarController(),
+        builder: (context) {
+          return _newCarController.newCarList.isNotEmpty
+              ? ListView.separated(
+                padding: EdgeInsets.only(bottom: 2.h),
+                shrinkWrap: true,
 
-        itemBuilder: (context, index) {
-          CarListData carData = _newCarController.newCarList[index];
-          return GestureDetector(
-            onTap: () async {
-              Get.toNamed(Routes.carDetailScreen, arguments: carData.carId);
-            },
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.borderColor),
-                    borderRadius: BorderRadius.circular(15.sp),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Container(
-                          width: 26.w,
-                          padding: EdgeInsets.all(5),
+                itemBuilder: (context, index) {
+                  CarListData carData = _newCarController.newCarList[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      Get.toNamed(
+                        Routes.carDetailScreen,
+                        arguments: carData.carId,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
                           decoration: BoxDecoration(
-                            color: AppColors.redColor,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(15.sp),
-                              bottomLeft: Radius.circular(15.sp),
-                            ),
+                            border: Border.all(color: AppColors.borderColor),
+                            borderRadius: BorderRadius.circular(15.sp),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          child: Stack(
                             children: [
-                              Icon(
-                                Icons.star_border,
-                                color: AppColors.whiteColor,
-                                size: 17.sp,
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Container(
+                                  width: 26.w,
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.redColor,
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(15.sp),
+                                      bottomLeft: Radius.circular(15.sp),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.star_border,
+                                        color: AppColors.whiteColor,
+                                        size: 17.sp,
+                                      ),
+                                      GapW(1.w),
+                                      CustomText(
+                                        text: 'Bestseller',
+                                        fontSize: 15.sp,
+                                        color: AppColors.whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              GapW(1.w),
-                              CustomText(
-                                text: 'Bestseller',
-                                fontSize: 15.sp,
-                                color: AppColors.whiteColor,
-                                fontWeight: FontWeight.w700,
+                              Padding(
+                                padding: EdgeInsets.all(15.sp),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomText(
+                                      text: carData.carName!,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    GapH(0.5.h),
+                                    CustomText(
+                                      text:
+                                          '${carData.carType} - ${carData.carTransmission}',
+                                      fontSize: 15.sp,
+                                      color: AppColors.darkGreyColor,
+                                    ),
+                                    GapH(2.h),
+                                    carData.carImage != null
+                                        ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10.sp,
+                                          ),
+                                          child: CustomNetworkImage(
+                                            height: 22.h,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            image:
+                                                '${Endpoints.baseUrl}${carData.carImage}',
+                                          ),
+                                        )
+                                        : CustomNoImage(height: 22.h),
+                                    GapH(2.h),
+                                    CustomText(
+                                      text: '1.2 Smart Plus',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    GapH(0.5.h),
+                                    CustomText(
+                                      text:
+                                          '${carData.carFuelType} - ${carData.carTransmission}',
+                                      fontSize: 15.sp,
+                                      color: AppColors.darkGreyColor,
+                                    ),
+                                    GapH(2.h),
+                                    CustomText(
+                                      text: '${carData.price}',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    GapH(2.h),
+                                    CustomButton(
+                                      text: 'Request More Info',
+                                      fontSize: 15.sp,
+                                      borderColor: AppColors.appColor,
+                                      buttonColor: Colors.transparent,
+                                      textColor: AppColors.appColor,
+                                      borderWidth: 1,
+
+                                      onTap: () {
+                                        if (Storage.instance.getToken() !=
+                                            null) {
+                                          requestInfoDialog();
+                                        } else {
+                                          Get.toNamed(Routes.loginScreen);
+                                        }
+                                      },
+                                    ),
+                                    GapH(1.h),
+                                    CustomButton(
+                                      text: 'Schedule a Test Drive',
+                                      fontSize: 15.sp,
+                                      // onTap: () => Get.toNamed(Routes.carDetailScreen),
+                                      onTap:
+                                          () => Get.toNamed(
+                                            Routes.bookTestDriveScreen,
+                                          ),
+
+                                      gradient: AppColors.gradient,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(15.sp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              text: carData.carName!,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            GapH(0.5.h),
-                            CustomText(
-                              text:
-                                  '${carData.carType} - ${carData.carTransmission}',
-                              fontSize: 15.sp,
-                              color: AppColors.greyColor,
-                            ),
-                            GapH(2.h),
-                            carData.carImage != null
-                                ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.sp),
-                                  child: CustomNetworkImage(
-                                    height: 22.h,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    image:
-                                        '${Endpoints.baseUrl}${carData.carImage}',
-                                  ),
-                                )
-                                : CustomNoImage(height: 22.h),
-                            GapH(2.h),
-                            CustomText(
-                              text: '1.2 Smart Plus',
-                              fontWeight: FontWeight.w700,
-                            ),
-                            GapH(0.5.h),
-                            CustomText(
-                              text:
-                                  '${carData.carFuelType} - ${carData.carTransmission}',
-                              fontSize: 15.sp,
-                              color: AppColors.greyColor,
-                            ),
-                            GapH(2.h),
-                            CustomText(
-                              text: '${carData.price}',
-                              fontWeight: FontWeight.w700,
-                            ),
-                            GapH(2.h),
-                            CustomButton(
-                              text: 'Request More Info',
-                              fontSize: 15.sp,
-                              borderColor: AppColors.appColor,
-                              buttonColor: Colors.transparent,
-                              textColor: AppColors.appColor,
-                              borderWidth: 1,
 
-                              onTap: () {
-                                if (Storage.instance.getToken() != null) {
-                                  requestInfoDialog();
-                                } else {
-                                  Get.toNamed(Routes.loginScreen);
-                                }
-                              },
+                        if (index == _newCarController.newCarList.length - 1 &&
+                            _newCarController.paginationselected.value) ...[
+                          Padding(
+                            padding: EdgeInsets.all(20.sp),
+                            child: LoadingAnimationWidget.threeArchedCircle(
+                              color: AppColors.appColor,
+                              size: 30,
                             ),
-                            GapH(1.h),
-                            CustomButton(
-                              text: 'Schedule a Test Drive',
-                              fontSize: 15.sp,
-                              // onTap: () => Get.toNamed(Routes.carDetailScreen),
-                              onTap:
-                                  () => Get.toNamed(Routes.bookTestDriveScreen),
-
-                              gradient: AppColors.gradient,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                if (index == _newCarController.newCarList.length - 1 &&
-                    _newCarController.paginationselected.value) ...[
-                  Padding(
-                    padding: EdgeInsets.all(20.sp),
-                    child: LoadingAnimationWidget.threeArchedCircle(
-                      color: AppColors.appColor,
-                      size: 30,
+                          ),
+                        ],
+                      ],
                     ),
-                  ),
-                ],
-              ],
-            ),
-          );
+                  );
+                },
+                separatorBuilder: (context, index) => GapH(2.h),
+                itemCount: _newCarController.newCarList.length,
+              )
+              : NoDataWidget();
         },
-        separatorBuilder: (context, index) => GapH(2.h),
-        itemCount: _newCarController.newCarList.length,
       ),
     );
   }

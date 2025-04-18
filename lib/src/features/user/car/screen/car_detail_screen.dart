@@ -40,7 +40,10 @@ class _CarDetailViewState extends State<CarDetailView> {
   var carId = Get.arguments;
   @override
   void initState() {
-    _carController.getCarBrandListData(carId: carId);
+    Future.wait([
+      _carController.getCarDetailData(carId: carId),
+      _carController.getCarCompareData(carId: carId),
+    ]);
     super.initState();
   }
 
@@ -64,7 +67,7 @@ class _CarDetailViewState extends State<CarDetailView> {
               BuildContext context,
               bool innerBoxIsScrolled,
             ) {
-              return <Widget>[CarAppbarWidget()];
+              return <Widget>[CarAppbarWidget(carId: carId)];
             },
             body: SingleChildScrollView(
               child: Column(
@@ -139,13 +142,15 @@ class _CarDetailViewState extends State<CarDetailView> {
                         GapH(1.5.h),
                         CustomButton(text: 'Book a Test Drive'),
                         GapH(1.5.h),
-                        CustomText(
-                          text: 'Compare Taisor with Similar Cars',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        GapH(1.5.h),
-                        CustomTableWidget(),
+                        if (_carController.carCompareList.isNotEmpty) ...[
+                          CustomText(
+                            text: 'Compare Taisor with Similar Cars',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          GapH(1.5.h),
+                          CustomTableWidget(),
+                        ],
                         CustomText(
                           text: 'Popular Upcoming Cras',
                           fontSize: 16.sp,

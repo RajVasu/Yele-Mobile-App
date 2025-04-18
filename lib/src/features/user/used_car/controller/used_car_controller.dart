@@ -94,4 +94,5 @@ class UsedCarController extends GetxController {
     }
     update();
   }
+
 }

@@ -60,6 +60,7 @@ class FilterController extends GetxController {
 
   List<String> makeModelFilterList = [];
   List<String> brandsFilterList = [];
+  List<String> newBrandFilterList = [];
   List<String> fuelFiltersList = [];
   List<String> modelYearFiltersList = [];
   List<String> rtoFiltersList = [];
@@ -78,7 +79,6 @@ class FilterController extends GetxController {
   }
 
   Future<void> getCarFilterData() async {
-    clearData();
     formzStatus.value = FormzStatus.loading;
     final result = await _carRepository.getFilterData();
     if (result.isFailure) {
@@ -198,7 +198,6 @@ class FilterController extends GetxController {
       kmDrivenFilters.clear();
       colorFilters.clear();
     }
-
     showMakeModelList = false.obs;
     showFuelFilters = false.obs;
     showModelYearFilters = false.obs;
@@ -271,8 +270,32 @@ class FilterController extends GetxController {
     update();
   }
 
-  addMianData({type}) {
+  addMianData({type}) async {
     mainList.clear();
+    RxDouble newMinPrice = RxDouble(
+      double.tryParse(
+            getFilterData.value.budget!.minPrice!
+                .replaceAll(',', '')
+                .replaceAll('\$', ''),
+          ) ??
+          0.0,
+    );
+
+    RxDouble newMaxPrice = RxDouble(
+      (double.tryParse(
+            getFilterData.value.budget!.maxPrice!
+                .replaceAll(',', '')
+                .replaceAll('\$', ''),
+          ) ??
+          0.0),
+    );
+    if (newMinPrice.value != budgetValues.value.start.round() ||
+        newMaxPrice.value != budgetValues.value.end.round()) {
+      mainList.insert(
+        0,
+        '\$ ${budgetValues.value.start.round()} - \$ ${budgetValues.value.end.round()}',
+      );
+    }
     mainList.addAll([
       ...makeModelFilterList,
       ...brandsFilterList,
@@ -287,12 +310,11 @@ class FilterController extends GetxController {
       ...colorFiltersList,
     ]);
     print(mainList);
+    await matchBrand();
     if (type == 'Used Car') {
-      _usedCarController.getUsedCarListData();
-    } else {
-      _newCarController.getNewCarListData(
+      await _usedCarController.getUsedCarListData(
         carModel: makeModelFilterList.toList(),
-        carBrand: brandsFilterList.toList(),
+        carBrand: newBrandFilterList.toList(),
         fuelType: fuelFiltersList.toList(),
         modelYear: modelYearFiltersList.toList(),
         rto: rtoFiltersList.toList(),
@@ -302,19 +324,120 @@ class FilterController extends GetxController {
         seats: seatFiltersList.toList(),
         kmDriven: kmDrivenFiltersList.toList(),
         color: colorFiltersList.toList(),
-        maxPrice: 0,
-        minPrice: 0,
+        minPrice: budgetValues.value.start,
+        maxPrice: budgetValues.value.end,
+      );
+      Get.back();
+    } else {
+      await _newCarController.getNewCarListData(
+        carModel: makeModelFilterList.toList(),
+        carBrand: newBrandFilterList.toList(),
+        fuelType: fuelFiltersList.toList(),
+        modelYear: modelYearFiltersList.toList(),
+        rto: rtoFiltersList.toList(),
+        bodyType: bodyTypeFiltersList.toList(),
+        transmissions: transmissionFiltersList.toList(),
+        owners: ownerFiltersList.toList(),
+        seats: seatFiltersList.toList(),
+        kmDriven: kmDrivenFiltersList.toList(),
+        color: colorFiltersList.toList(),
+        minPrice: budgetValues.value.start,
+        maxPrice: budgetValues.value.end,
       );
       Get.back();
     }
   }
 
-  removeMainData({required String data}) {
+  removeMainData({required String data, type}) async {
     mainList.remove(data);
+    await checkDataList();
+    await matchBrand();
+    if (type == 'Used Car') {
+      await _usedCarController.getUsedCarListData(
+        carModel: makeModelFilterList.toList(),
+        carBrand: newBrandFilterList.toList(),
+        fuelType: fuelFiltersList.toList(),
+        modelYear: modelYearFiltersList.toList(),
+        rto: rtoFiltersList.toList(),
+        bodyType: bodyTypeFiltersList.toList(),
+        transmissions: transmissionFiltersList.toList(),
+        owners: ownerFiltersList.toList(),
+        seats: seatFiltersList.toList(),
+        kmDriven: kmDrivenFiltersList.toList(),
+        color: colorFiltersList.toList(),
+        minPrice: budgetValues.value.start,
+        maxPrice: budgetValues.value.end,
+      );
+      Get.back();
+    } else {
+      await _newCarController.getNewCarListData(
+        carModel: makeModelFilterList.toList(),
+        carBrand: newBrandFilterList.toList(),
+        fuelType: fuelFiltersList.toList(),
+        modelYear: modelYearFiltersList.toList(),
+        rto: rtoFiltersList.toList(),
+        bodyType: bodyTypeFiltersList.toList(),
+        transmissions: transmissionFiltersList.toList(),
+        owners: ownerFiltersList.toList(),
+        seats: seatFiltersList.toList(),
+        kmDriven: kmDrivenFiltersList.toList(),
+        color: colorFiltersList.toList(),
+        minPrice: budgetValues.value.start,
+        maxPrice: budgetValues.value.end,
+      );
+      Get.back();
+    }
     print(mainList);
   }
 
   checkDataList() {
+    if (mainList.isNotEmpty) {
+      if (mainList[0].startsWith('\$')) {
+        print("The first value starts with the dollar sign.");
+      } else {
+        minPrice.value =
+            double.tryParse(
+              getFilterData.value.budget!.minPrice!
+                  .replaceAll(',', '')
+                  .replaceAll('\$', ''),
+            ) ??
+            0;
+        maxPrice.value =
+            double.tryParse(
+              getFilterData.value.budget!.maxPrice!
+                  .replaceAll(',', '')
+                  .replaceAll('\$', ''),
+            ) ??
+            0;
+
+        if (minPrice.value <= maxPrice.value) {
+          budgetValues.value = RangeValues(minPrice.value, maxPrice.value);
+        } else {
+          budgetValues.value = RangeValues(0, 10);
+        }
+      }
+    } else {
+      minPrice.value =
+          double.tryParse(
+            getFilterData.value.budget!.minPrice!
+                .replaceAll(',', '')
+                .replaceAll('\$', ''),
+          ) ??
+          0;
+      maxPrice.value =
+          double.tryParse(
+            getFilterData.value.budget!.maxPrice!
+                .replaceAll(',', '')
+                .replaceAll('\$', ''),
+          ) ??
+          0;
+
+      if (minPrice.value <= maxPrice.value) {
+        budgetValues.value = RangeValues(minPrice.value, maxPrice.value);
+      } else {
+        budgetValues.value = RangeValues(0, 10);
+      }
+    }
     makeModelFilterList.retainWhere((item) => mainList.contains(item));
     brandsFilterList.retainWhere((item) => mainList.contains(item));
     fuelFiltersList.retainWhere((item) => mainList.contains(item));
@@ -404,5 +527,93 @@ class FilterController extends GetxController {
         filter.clicked.value = false;
       }
     }
+  }
+
+  clearDataInit() async {
+    makeModelList.clear();
+    brandsList.clear();
+    fuelFilters.clear();
+    modelYearFilters.clear();
+    rtoFilters.clear();
+    bodyTypeFilters.clear();
+    transmissionFilters.clear();
+    ownerFilters.clear();
+    seatFilters.clear();
+    kmDrivenFilters.clear();
+    colorFilters.clear();
+    mainList.clear();
+    showMakeModelList = false.obs;
+    showFuelFilters = false.obs;
+    showModelYearFilters = false.obs;
+    showRtoFilters = false.obs;
+    showBodyTypeFilters = false.obs;
+    showTransmissionFilters = false.obs;
+    showOwnerFilters = false.obs;
+    showSeatFilters = false.obs;
+    showKmDrivenFilters = false.obs;
+    showColorFilters = false.obs;
+    showBrandsList = false.obs;
+    showBudgetSlider = false.obs;
+    minPrice = 0.0.obs;
+    maxPrice = 0.0.obs;
+    budgetValues = RangeValues(0, 10).obs;
+    makeModelFilterList.retainWhere((item) => mainList.contains(item));
+    brandsFilterList.retainWhere((item) => mainList.contains(item));
+    fuelFiltersList.retainWhere((item) => mainList.contains(item));
+    modelYearFiltersList.retainWhere((item) => mainList.contains(item));
+    rtoFiltersList.retainWhere((item) => mainList.contains(item));
+    bodyTypeFiltersList.retainWhere((item) => mainList.contains(item));
+    transmissionFiltersList.retainWhere((item) => mainList.contains(item));
+    ownerFiltersList.retainWhere((item) => mainList.contains(item));
+    seatFiltersList.retainWhere((item) => mainList.contains(item));
+    kmDrivenFiltersList.retainWhere((item) => mainList.contains(item));
+    colorFiltersList.retainWhere((item) => mainList.contains(item));
+    await matchBrand();
+    await _usedCarController.getUsedCarListData(
+      carModel: makeModelFilterList.toList(),
+      carBrand: newBrandFilterList.toList(),
+      fuelType: fuelFiltersList.toList(),
+      modelYear: modelYearFiltersList.toList(),
+      rto: rtoFiltersList.toList(),
+      bodyType: bodyTypeFiltersList.toList(),
+      transmissions: transmissionFiltersList.toList(),
+      owners: ownerFiltersList.toList(),
+      seats: seatFiltersList.toList(),
+      kmDriven: kmDrivenFiltersList.toList(),
+      color: colorFiltersList.toList(),
+      maxPrice: 0,
+      minPrice: 0,
+    );
+
+    await _newCarController.getNewCarListData(
+      carModel: makeModelFilterList.toList(),
+      carBrand: newBrandFilterList.toList(),
+      fuelType: fuelFiltersList.toList(),
+      modelYear: modelYearFiltersList.toList(),
+      rto: rtoFiltersList.toList(),
+      bodyType: bodyTypeFiltersList.toList(),
+      transmissions: transmissionFiltersList.toList(),
+      owners: ownerFiltersList.toList(),
+      seats: seatFiltersList.toList(),
+      kmDriven: kmDrivenFiltersList.toList(),
+      color: colorFiltersList.toList(),
+      maxPrice: 0,
+      minPrice: 0,
+    );
+  }
+
+  matchBrand() {
+    newBrandFilterList.clear();
+    for (var brandName in brandsFilterList) {
+      var matchedBrand = getFilterData.value.brand?.firstWhere(
+        (e) => e.brandName == brandName,
+      );
+
+      if (matchedBrand != null) {
+        newBrandFilterList.add('${matchedBrand.brandId}');
+      }
+    }
+
+    print(newBrandFilterList);
   }
 }

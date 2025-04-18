@@ -30,6 +30,7 @@ class GetCarModel {
   String? specification;
   List<Features>? features;
   bool? isActive;
+  bool? isFavorite;
   List<CarImages>? carImages;
 
   GetCarModel({
@@ -64,6 +65,7 @@ class GetCarModel {
     this.specification,
     this.features,
     this.isActive,
+    this.isFavorite,
     this.carImages,
   });
 
@@ -104,6 +106,7 @@ class GetCarModel {
       });
     }
     isActive = json['is_active'];
+    isFavorite = json['is_favorite'];
     if (json['car_images'] != null) {
       carImages = <CarImages>[];
       json['car_images'].forEach((v) {
@@ -147,6 +150,7 @@ class GetCarModel {
       data['features'] = features!.map((v) => v.toJson()).toList();
     }
     data['is_active'] = isActive;
+    data['is_favorite'] = isFavorite;
     if (carImages != null) {
       data['car_images'] = carImages!.map((v) => v.toJson()).toList();
     }

@@ -62,11 +62,14 @@ class CustomButton extends StatelessWidget {
                     backgroundColor: AppColors.whiteColor,
                   ),
                 )
-                : CustomText(
-                  text: text,
-                  fontWeight: fontWeight ?? FontWeight.w700,
-                  color: textColor ?? AppColors.whiteColor,
-                  fontSize: fontSize ?? 17.sp,
+                : SizedBox(
+                  height: 20.7,
+                  child: CustomText(
+                    text: text,
+                    fontWeight: fontWeight ?? FontWeight.w700,
+                    color: textColor ?? AppColors.whiteColor,
+                    fontSize: fontSize ?? 17.sp,
+                  ),
                 ),
       ),
     );

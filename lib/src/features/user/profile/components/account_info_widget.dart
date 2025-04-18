@@ -26,7 +26,7 @@ class _AccountInfoWidgetState extends State<AccountInfoWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GapH(7.h),
+          GapH(0.5.h),
           CustomText(
             text: 'Account Info',
             fontWeight: FontWeight.w700,

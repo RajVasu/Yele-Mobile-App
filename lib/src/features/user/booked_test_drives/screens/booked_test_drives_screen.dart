@@ -43,7 +43,8 @@ class BookedTestDrivesScreenState extends State<BookedTestDrivesScreen> {
     return CustomBgWidget(
       appBar: customAppBar(title: 'Booked Test Drives'),
       body: ListView.separated(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(bottom: 3.h),
+        // padding: EdgeInsets.zero,
         shrinkWrap: true,
         itemCount: 7,
         itemBuilder: (context, index) {

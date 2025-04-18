@@ -75,6 +75,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         appBar: customAppBar(title: 'Verify OTP'),
         body: Column(
           children: [
+            GapH(2.h),
             CustomText(
               text:
                   'Please enter the 4 digit verification code we just sent to ${type == "userRegister" ? formatEmail(registerController.emailController.text) : formatEmail(forgotPasswordController.emailController.text)}',
@@ -174,6 +175,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 onTap: () => _onOTPVerifyTap(context),
               ),
             ),
+            GapH(3.h),
           ],
         ),
       ),

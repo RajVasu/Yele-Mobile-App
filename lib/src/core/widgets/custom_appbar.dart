@@ -128,8 +128,8 @@ Widget customAppBar({String? title, bool isBack = true, Widget? actionWidget}) {
                 onTap: () => Get.back(),
                 child: CustomAssetImage(
                   image: Assets.assetsIconsBackIcon,
-                  height: 2.h,
-                  width: 2.h,
+                  height: 2.5.h,
+                  width: 2.5.h,
                 ),
               ),
             )

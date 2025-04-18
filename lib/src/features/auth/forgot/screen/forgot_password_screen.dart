@@ -38,6 +38,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         appBar: customAppBar(title: 'Forgot Password'),
         body: Column(
           children: [
+            GapH(1.h),
             CustomText(
               text: 'Enter the email address associated with your account',
               color: AppColors.darkGreyColor,
@@ -89,6 +90,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
             ),
+            GapH(3.h),
           ],
         ),
       ),

@@ -264,8 +264,10 @@ class ProfileController extends GetxController {
       errorSnackBar(message: result.failure.message);
       return;
     }
-    successSnackBar(message: result.data);
+    Get.back();
+    await successSnackBar(message: result.data);
     formzStatus.value = FormzStatus.pure;
+    await getCurrentUserData();
   }
 
   Future<void> resetPwd() async {

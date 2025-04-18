@@ -46,13 +46,17 @@ class _ExploreOptionWidgetState extends State<ExploreOptionWidget> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildSelectionButton('Select Brand', 0, () {
-                  currentPage.value = 0;
-                }),
-                SizedBox(width: 2.w),
-                _buildSelectionButton('Select Model', 1, () {
-                  currentPage.value = 1;
-                }),
+                if (_userHomeController.carBrandList.isNotEmpty) ...[
+                  _buildSelectionButton('Select Brand', 0, () {
+                    currentPage.value = 0;
+                  }),
+                ],
+                if (_userHomeController.carModelList.isNotEmpty) ...[
+                  SizedBox(width: 2.w),
+                  _buildSelectionButton('Select Model', 1, () {
+                    currentPage.value = 1;
+                  }),
+                ],
                 SizedBox(width: 2.w),
                 _buildSelectionButton('Select Make Year', 2, () {
                   currentPage.value = 2;

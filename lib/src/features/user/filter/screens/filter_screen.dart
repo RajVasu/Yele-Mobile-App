@@ -40,6 +40,7 @@ class _FilterViewState extends State<FilterView> {
   void initState() {
     type = Get.arguments;
     if (controller.mainList.isEmpty) {
+      controller.clearData();
       controller.getCarFilterData();
     } else {
       controller.checkDataList();
@@ -173,6 +174,7 @@ class _FilterViewState extends State<FilterView> {
                                   ),
                                   onChanged: (RangeValues values) {
                                     controller.budgetValues.value = values;
+                                    print(controller.budgetValues.value);
                                   },
                                 ),
                               ),

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:yele/src/config/constants/app_strings.dart';
-import 'package:yele/src/core/screens/no_internet_screen.dart'
-    show NoInternetScreen;
+import 'package:yele/src/core/screens/no_internet_screen.dart';
 import 'package:yele/src/core/utils/formz_status.dart';
 import 'package:yele/src/core/utils/validator.dart';
 import 'package:yele/src/core/widgets/custom_appbar.dart';
@@ -55,6 +54,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           key: _formKey,
           child: Column(
             children: [
+              GapH(1.h),
               CustomTextfield(
                 controller: _profileController.oldPwdController,
                 displayText: AppStrings.oldPassword,
@@ -84,6 +84,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                   onTap: () => _onChangePwdTap(context),
                 ),
               ),
+              GapH(3.h),
             ],
           ),
         ),

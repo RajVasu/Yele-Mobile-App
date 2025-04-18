@@ -37,7 +37,7 @@ class _SavedSearchScreenState extends State<SavedSearchScreen> {
           !listEmpty
               ? ListView.separated(
                 itemCount: 5,
-                padding: EdgeInsets.only(bottom: 2.h, left: 2.w, right: 2.w),
+                padding: EdgeInsets.only(bottom: 3.h, left: 2.w, right: 2.w),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return Container(

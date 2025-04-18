@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:yele/src/core/screens/no_internet_screen.dart';
 import 'package:yele/src/core/widgets/custom_appbar.dart';
 import 'package:yele/src/core/widgets/custom_bg_widget.dart';
 import 'package:yele/src/core/widgets/gap.dart';
+import 'package:yele/src/features/user/filter/controller/filter_controller.dart';
 import 'package:yele/src/features/user/new_car/components/Search_car_widget.dart';
 import 'package:yele/src/features/user/new_car/components/new_car_list.dart';
 
@@ -29,6 +31,13 @@ class NewCarView extends StatefulWidget {
 }
 
 class _NewCarViewState extends State<NewCarView> {
+  final FilterController _filterController = Get.find();
+  @override
+  void initState() {
+    super.initState();
+    _filterController.clearDataInit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomBgWidget(

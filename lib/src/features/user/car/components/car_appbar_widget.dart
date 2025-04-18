@@ -5,10 +5,12 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:yele/src/api/endpoints.dart';
 import 'package:yele/src/config/constants/app_colors.dart';
+import 'package:yele/src/core/database/storage.dart';
 import 'package:yele/src/features/user/car/controller/car_controller.dart';
 
 class CarAppbarWidget extends StatefulWidget {
-  const CarAppbarWidget({super.key});
+  int carId;
+  CarAppbarWidget({super.key, required this.carId});
 
   @override
   State<CarAppbarWidget> createState() => _CarAppbarWidgetState();
@@ -28,29 +30,31 @@ class _CarAppbarWidgetState extends State<CarAppbarWidget> {
       pinned: true,
 
       actions: [
-        GestureDetector(
-          onTap:
-              () =>
-                  _carController.favorite.value =
-                      !_carController.favorite.value,
-          child: Container(
-            margin: EdgeInsets.only(right: 5.w, top: 9.sp, bottom: 9.sp),
-            padding: EdgeInsets.all(12.sp),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: Obx(
-              () => Icon(
-                _carController.favorite.value
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                color: AppColors.appColor,
-                size: 18.sp,
+        if (Storage.instance.getToken() != null) ...[
+          GestureDetector(
+            onTap: () {
+              _carController.favoriteCar(carId: widget.carId);
+            },
+
+            child: Container(
+              margin: EdgeInsets.only(right: 5.w, top: 9.sp, bottom: 9.sp),
+              padding: EdgeInsets.all(12.sp),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Obx(
+                () => Icon(
+                  _carController.favorite.value
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: AppColors.appColor,
+                  size: 18.sp,
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ],
 
       leading: GestureDetector(

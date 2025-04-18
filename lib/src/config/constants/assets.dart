@@ -1286,6 +1286,10 @@ class Assets {
   /// assets/images/new_car.png
   static const String assetsImagesNewCar = "assets/images/new_car.png";
 
+  /// Assets for assetsImagesNoDataFound
+  /// assets/images/no_data_found.png
+  static const String assetsImagesNoDataFound = "assets/images/no_data_found.png";
+
   /// Assets for assetsImagesNoImageHere
   /// assets/images/no_image_here.png
   static const String assetsImagesNoImageHere = "assets/images/no_image_here.png";

@@ -46,6 +46,7 @@ class _ProfileViewState extends State<ProfileView> {
       appBar: customAppBar(title: 'Profile', isBack: false),
       body: Column(
         children: [
+          GapH(2.h),
           ProfileItemWidget(
             title: 'My Account',
             onTap: () async {
@@ -57,7 +58,7 @@ class _ProfileViewState extends State<ProfileView> {
               }
             },
           ),
-            ProfileItemWidget(
+          ProfileItemWidget(
             title: 'Saved Search',
             onTap: () {
               if (Storage.instance.getToken() != null) {
@@ -113,6 +114,7 @@ class _ProfileViewState extends State<ProfileView> {
                 dashboardController.selectedIndex.value = 0;
               },
             ),
+            GapH(2.h),
           ],
         ],
       ),
@@ -152,7 +154,11 @@ class _ProfileViewState extends State<ProfileView> {
                   color: AppColors.lightPinkColor,
                 ),
 
-                child: CustomAssetImage(image: icon, height: 5.5.h, width: 5.5.h),
+                child: CustomAssetImage(
+                  image: icon,
+                  height: 5.5.h,
+                  width: 5.5.h,
+                ),
               ),
 
               GapH(2.h),

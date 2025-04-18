@@ -1,10 +1,11 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:yele/src/api/endpoints.dart';
 import 'package:yele/src/config/constants/app_colors.dart';
-import 'package:yele/src/config/constants/assets.dart';
 import 'package:yele/src/core/widgets/custom_image.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
+import 'package:yele/src/features/user/car/controller/car_controller.dart';
 
 class CustomTableWidget extends StatefulWidget {
   const CustomTableWidget({super.key});
@@ -14,6 +15,7 @@ class CustomTableWidget extends StatefulWidget {
 }
 
 class _CustomTableWidgetState extends State<CustomTableWidget> {
+  final CarController _carController = Get.find();
   List comList = [
     'Starting MSRP',
     'Engine (cc)',
@@ -25,7 +27,7 @@ class _CustomTableWidgetState extends State<CustomTableWidget> {
     'Audio',
     'Safety',
   ];
-
+  /* 
   List comValueList = [
     {
       'image': Assets.assetsImagesBCar4,
@@ -54,7 +56,7 @@ class _CustomTableWidgetState extends State<CustomTableWidget> {
       'safety': '',
     },
   ];
-
+ */
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -120,24 +122,29 @@ class _CustomTableWidgetState extends State<CustomTableWidget> {
                     horizontalInside: BorderSide(color: AppColors.borderColor),
                   ),
                   columns:
-                      comValueList.toList().map((data) {
+                      _carController.carCompareList.toList().map((data) {
                         return DataColumn(
                           headingRowAlignment: MainAxisAlignment.center,
                           label: Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: CustomAssetImage(
-                                  image: data['image'],
-                                  height: 15.h,
-                                  width: 15.h,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.sp),
+                                  child: CustomNetworkImage(
+                                    image:
+                                        '${Endpoints.baseUrl}${data.carImage!}',
+                                    fit: BoxFit.cover,
+                                    height: 15.h,
+                                    width: 15.h,
+                                  ),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
                                   child: CustomText(
-                                    text: data['car_name'],
+                                    text: data.carName!,
                                     fontSize: 15.sp,
                                     maxLines: 2,
                                     textAlign: TextAlign.center,
@@ -172,13 +179,38 @@ class _CustomTableWidgetState extends State<CustomTableWidget> {
   DataRow tableDataWidget({data}) {
     return DataRow(
       cells:
-          comValueList.toList().map((e) {
+          _carController.carCompareList.toList().map((e) {
             return DataCell(
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: CustomText(
-                    text: e[data],
+                    text:
+                        data == 'starting'
+                            ? (e.price == null ? "-" : e.price.toString())
+                            : data == 'engine'
+                            ? (e.carEngine == null
+                                ? "-"
+                                : e.carEngine.toString())
+                            : data == 'fuel'
+                            ? (e.carFuelType == null
+                                ? "-"
+                                : e.carFuelType.toString())
+                            : data == 'transmission'
+                            ? (e.carTransmission == null
+                                ? "-"
+                                : e.carTransmission.toString())
+                            : data == 'power'
+                            ? (e.carPower == null ? "-" : e.carPower.toString())
+                            : data == 'exterior'
+                            ? (e.exterior == null ? "-" : e.exterior.toString())
+                            : data == 'interior'
+                            ? (e.interior == null ? "-" : e.interior.toString())
+                            : data == 'audio'
+                            ? (e.audio == null ? "-" : e.audio.toString())
+                            : data == 'safety'
+                            ? (e.safety == null ? "-" : e.safety.toString())
+                            : '-',
                     fontWeight: FontWeight.bold,
                     fontSize: 13.sp,
                   ),

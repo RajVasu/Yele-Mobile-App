@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
+import 'package:yele/src/api/endpoints.dart';
 import 'package:yele/src/config/constants/app_colors.dart';
 import 'package:yele/src/config/constants/assets.dart';
 import 'package:yele/src/config/router/routes.dart';
@@ -15,6 +19,7 @@ import 'package:yele/src/core/widgets/custom_image.dart';
 import 'package:yele/src/core/widgets/custom_text.dart';
 import 'package:yele/src/core/widgets/custom_text_field.dart';
 import 'package:yele/src/core/widgets/gap.dart';
+import 'package:yele/src/features/user/car/model/get_car_list_model.dart';
 import 'package:yele/src/features/user/profile/controller/favorite_cars_controller.dart';
 
 class FavoriteCarsScreen extends StatefulWidget {
@@ -25,122 +30,213 @@ class FavoriteCarsScreen extends StatefulWidget {
 }
 
 class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
-  FavoriteCarsController controller = Get.find();
-
+  final FavoriteCarsController _favoriteCarsController = Get.find();
   bool listEmpty = false;
+  @override
+  void initState() {
+    super.initState();
+    _favoriteCarsController.getFavoriteCarListData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomBgWidget(
       appBar: customAppBar(title: 'Favorite Cars'),
-      body:
-          !listEmpty
-              ? ListView.separated(
-                itemCount: 5,
-                padding: EdgeInsets.only(bottom: 2.h, left: 2.w, right: 2.w),
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.sp),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  text: 'Maruti Suzuki Swift',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18.sp,
-                                ),
-                                GapH(0.5.h),
-                                CustomText(
-                                  text: 'Hatchback - Manual - 1/5 Variants',
-                                  fontSize: 15.sp,
-                                  color: AppColors.darkGreyColor,
+      body: LazyLoadScrollView(
+        onEndOfPage: () {
+          if (_favoriteCarsController.currentPageIndex.value <
+              _favoriteCarsController.getFavoriteCarData.value.totalPages!) {
+            _favoriteCarsController.paginationselected.value = true;
+            _favoriteCarsController.getFavoriteCarListDataPagination();
+            setState(() {
+              Timer(const Duration(seconds: 5), () {
+                setState(() {
+                  _favoriteCarsController.paginationselected.value = false;
+                });
+              });
+            });
+          }
+        },
+        child: GetBuilder<FavoriteCarsController>(
+          init: FavoriteCarsController(),
+          builder: (context) {
+            return _favoriteCarsController.favoriteCarList.isNotEmpty
+                ? ListView.separated(
+                  itemCount: _favoriteCarsController.favoriteCarList.length,
+                  padding: EdgeInsets.only(top: 1.h, bottom: 3.h),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    CarListData carData =
+                        _favoriteCarsController.favoriteCarList[index];
+                    return GestureDetector(
+                      onTap: () async {
+                        await Get.toNamed(
+                          Routes.carDetailScreen,
+                          arguments: carData.carId,
+                        );
+                        await _favoriteCarsController.getFavoriteCarListData();
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                              borderRadius: BorderRadius.circular(15.sp),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 7.0,
+                                  spreadRadius: 2.0,
+                                  color: AppColors.greyColor.withOpacity(0.3),
                                 ),
                               ],
                             ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CustomText(
+                                          text: carData.carName!,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        GapH(0.5.h),
+                                        CustomText(
+                                          text:
+                                              '${carData.carType} - ${carData.carTransmission}',
+                                          fontSize: 15.sp,
+                                          color: AppColors.darkGreyColor,
+                                        ),
+                                      ],
+                                    ),
 
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppColors.dividerColor,
+                                    GestureDetector(
+                                      onTap: () {
+                                        _favoriteCarsController
+                                            .removeFavoriteCar(
+                                              carId: carData.carId,
+                                            );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: AppColors.dividerColor,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.favorite,
+                                          color: AppColors.appColor,
+                                          size: 20.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              child: Icon(
-                                Icons.favorite,
+                                GapH(1.5.h),
+                                carData.carImage != null
+                                    ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        10.sp,
+                                      ),
+                                      child: CustomNetworkImage(
+                                        height: 22.h,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        image:
+                                            '${Endpoints.baseUrl}${carData.carImage}',
+                                      ),
+                                    )
+                                    : CustomNoImage(height: 22.h),
+                                GapH(1.h),
+                                CustomText(
+                                  text: '1.2 Smart Plus',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 17.5.sp,
+                                ),
+                                GapH(0.3.h),
+                                CustomText(
+                                  text:
+                                      '${carData.carFuelType} - ${carData.carTransmission}',
+                                  fontSize: 15.sp,
+                                  color: AppColors.darkGreyColor,
+                                ),
+                                GapH(1.5.h),
+                                CustomText(
+                                  text: '${carData.price}',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                GapH(1.5.h),
+                                CustomButton(
+                                  text: 'Request More Info',
+                                  fontSize: 15.sp,
+                                  borderColor: AppColors.appColor,
+                                  buttonColor: Colors.transparent,
+                                  textColor: AppColors.appColor,
+                                  borderWidth: 1,
+                                  onTap: () {
+                                    if (Storage.instance.getToken() != null) {
+                                      requestInfoDialog();
+                                    } else {
+                                      Get.toNamed(Routes.loginScreen);
+                                    }
+                                  },
+                                ),
+                                GapH(1.h),
+                                CustomButton(
+                                  text: 'Schedule a Test Drive',
+                                  fontSize: 15.sp,
+                                  onTap:
+                                      () => Get.toNamed(
+                                        Routes.bookTestDriveScreen,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (index ==
+                                  _favoriteCarsController
+                                          .favoriteCarList
+                                          .length -
+                                      1 &&
+                              _favoriteCarsController
+                                  .paginationselected
+                                  .value) ...[
+                            Padding(
+                              padding: EdgeInsets.all(20.sp),
+                              child: LoadingAnimationWidget.threeArchedCircle(
                                 color: AppColors.appColor,
-                                size: 20.sp,
+                                size: 30,
                               ),
                             ),
                           ],
-                        ),
-                        GapH(1.5.h),
-                        CustomAssetImage(image: Assets.assetsImagesCar),
-                        GapH(1.h),
-                        CustomText(
-                          text: '1.2 Smart Plus',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17.5.sp,
-                        ),
-                        GapH(0.3.h),
-                        CustomText(
-                          text: 'Petrol - Manual - Available in 4 colors',
-                          fontSize: 15.sp,
-                          color: AppColors.darkGreyColor,
-                        ),
-                        GapH(1.5.h),
-                        CustomText(
-                          text: '\$9999.52',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18.5.sp,
-                        ),
-                        GapH(1.5.h),
-                        CustomButton(
-                          text: 'Request More Info',
-                          fontSize: 15.sp,
-                          borderColor: AppColors.appColor,
-                          buttonColor: Colors.transparent,
-                          textColor: AppColors.appColor,
-                          borderWidth: 1,
-                          onTap: () {
-                            if (Storage.instance.getToken() != null) {
-                              requestInfoDialog();
-                            } else {
-                              Get.toNamed(Routes.loginScreen);
-                            }
-                          },
-                        ),
-                        GapH(1.h),
-                        CustomButton(
-                          text: 'Schedule a Test Drive',
-                          fontSize: 15.sp,
-                          onTap: () => Get.toNamed(Routes.bookTestDriveScreen),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) => GapH(3.h),
-              )
-              : emptyListWidget(),
+                        ],
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => GapH(3.h),
+                )
+                : emptyListWidget();
+          },
+        ),
+      ),
     );
   }
 
   Widget emptyListWidget() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 7.w),
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GapH(18.h),
           CustomAssetImage(image: Assets.assetsImagesFavCars, width: 18.h),
           GapH(2.h),
           CustomText(
@@ -283,7 +379,9 @@ class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
                               ),
                               Expanded(
                                 child: CustomTextfield(
-                                  controller: controller.firstNameController,
+                                  controller:
+                                      _favoriteCarsController
+                                          .firstNameController,
                                   hintText: 'First Name',
                                 ),
                               ),
@@ -294,7 +392,9 @@ class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
                             children: [
                               Expanded(
                                 child: CustomTextfield(
-                                  controller: controller.lastNameController,
+                                  controller:
+                                      _favoriteCarsController
+                                          .lastNameController,
                                   hintText: 'Last Name',
                                 ),
                               ),
@@ -319,7 +419,9 @@ class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
                                 flex: 3,
                                 fit: FlexFit.loose,
                                 child: CustomTextfield(
-                                  controller: controller.contactNoController,
+                                  controller:
+                                      _favoriteCarsController
+                                          .contactNoController,
                                   hintText: '77084 77084',
                                 ),
                               ),
@@ -334,7 +436,7 @@ class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
                           CustomText(text: 'You can reach me by email at'),
                           GapH(1.2.h),
                           CustomTextfield(
-                            controller: controller.emailController,
+                            controller: _favoriteCarsController.emailController,
                             hintText: 'Email Address',
                           ),
                           GapH(1.2.h),
@@ -348,7 +450,8 @@ class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
                               Flexible(
                                 fit: FlexFit.loose,
                                 child: CustomTextfield(
-                                  controller: controller.zipCodeController,
+                                  controller:
+                                      _favoriteCarsController.zipCodeController,
                                   hintText: '183251',
                                 ),
                               ),
@@ -387,11 +490,15 @@ class _FavoriteCarsScreenState extends State<FavoriteCarsScreen> {
                                   shape: ContinuousRectangleBorder(
                                     borderRadius: BorderRadius.circular(7),
                                   ),
-                                  value: controller.agreeRequestInfo.value,
+                                  value:
+                                      _favoriteCarsController
+                                          .agreeRequestInfo
+                                          .value,
                                   onChanged:
                                       (value) =>
-                                          controller.agreeRequestInfo.value =
-                                              !controller
+                                          _favoriteCarsController
+                                              .agreeRequestInfo
+                                              .value = !_favoriteCarsController
                                                   .agreeRequestInfo
                                                   .value,
                                 ),

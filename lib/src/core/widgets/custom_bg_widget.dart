@@ -30,7 +30,7 @@ class _CustomBgWidgetState extends State<CustomBgWidget> {
               width: double.infinity,
               padding:
                   widget.padding ??
-                  EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                  EdgeInsets.only(left: 6.w, right: 6.w, top: 1.h),
               decoration: BoxDecoration(
                 color: AppColors.whiteColor,
                 borderRadius: BorderRadius.only(

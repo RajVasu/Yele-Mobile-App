@@ -342,7 +342,7 @@ class RegisterController extends GetxController {
   RxList<GetDealerListModal> dealersList = <GetDealerListModal>[].obs;
   Future<void> getDealerList() async {
     dealersList.clear();
-    formzStatus.value = FormzStatus.loading;
+    // formzStatus.value = FormzStatus.loading;
     final result = await _authRepository.getDealerList();
     if (result.isFailure) {
       formzStatus.value = FormzStatus.pure;
@@ -350,13 +350,13 @@ class RegisterController extends GetxController {
       return;
     }
     dealersList.addAll(result.data.toList());
-    selectedDealer.value = dealersList.first.userId.toString();
+    // selectedDealer.value = dealersList.first.userId.toString();
     for (var element in dealersList) {
       Log.s("DATA ::: ${element.toJson()}");
       Log.s("DATA ::: ${element.userId}");
       Log.s("DATA ::: ${element.firstName}");
     }
-    formzStatus.value = FormzStatus.pure;
+    // formzStatus.value = FormzStatus.pure;
   }
 
   void clearUserData() {
